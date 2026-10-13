@@ -856,6 +856,132 @@ p, h1, h2, h3 { text-wrap: pretty; }
 .saved-builds li { font-size: .7rem; }
 .saved-builds li strong { color: var(--text-muted); font-size: .65rem; text-align: right; }
 
+/* Account */
+.account-page { padding-top: 58px; }
+.account-auth-layout {
+  width: min(1080px, calc(100% - 48px));
+  min-height: 590px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, .78fr);
+  align-items: center;
+  gap: clamp(40px, 8vw, 104px);
+}
+.account-auth-intro h1 {
+  max-width: 620px;
+  margin: 0;
+  font-size: clamp(3.2rem, 6.6vw, 5.25rem);
+  font-weight: 770;
+  letter-spacing: -.06em;
+  line-height: .99;
+}
+.account-auth-intro .page-lede { max-width: 490px; }
+.account-auth-intro .preview-note { max-width: 450px; }
+.account-panel {
+  min-width: 0;
+  padding: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(145deg, rgba(238, 210, 146, .035), transparent 48%),
+    rgba(19, 19, 26, .88);
+}
+.account-auth-panel { padding: 29px; }
+.account-panel-heading .eyebrow { margin-bottom: 8px; }
+.account-panel-heading h2 {
+  margin: 0;
+  font-size: 1.28rem;
+  letter-spacing: -.035em;
+}
+.account-panel-heading > p:last-child {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: .78rem;
+  line-height: 1.6;
+}
+.account-form { margin-top: 22px; display: grid; gap: 16px; }
+.account-form .form-field { gap: 7px; }
+.account-field-hint { color: var(--text-dim); font-size: .68rem; line-height: 1.5; }
+.account-submit { width: 100%; justify-content: space-between; margin-top: 4px; }
+.account-feedback {
+  min-height: 20px;
+  margin: 12px 0 0;
+  color: var(--green);
+  font-size: .75rem;
+  line-height: 1.55;
+}
+.account-feedback.is-error { color: var(--red); }
+.account-auth-switch {
+  padding-top: 18px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: .76rem;
+}
+.account-switch-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.account-back-link {
+  margin-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: .72rem;
+  text-decoration: none;
+}
+.account-back-link:hover { color: var(--flaxen); }
+.account-page-intro { margin-bottom: 34px; }
+.account-page-intro h1 { font-size: clamp(2.6rem, 5.5vw, 4.4rem); }
+.account-content { width: min(900px, 100%); display: grid; gap: 16px; }
+.account-heading-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.account-logout { min-height: 40px; }
+.account-profile-form { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.account-form-actions { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.account-form-actions .account-feedback { flex: 1; }
+.account-security-form { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.account-delete-form { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.account-danger-panel { border-color: rgba(255, 151, 144, .25); }
+.account-danger-panel .eyebrow { color: var(--red); }
+.account-danger-button {
+  min-height: 46px;
+  padding: 0 17px;
+  border: 1px solid rgba(255, 151, 144, .4);
+  border-radius: 9px;
+  background: rgba(255, 151, 144, .09);
+  color: var(--red);
+  font-size: .86rem;
+  font-weight: 650;
+  transition: background .16s, border-color .16s;
+}
+.account-danger-button:hover { border-color: var(--red); background: rgba(255, 151, 144, .15); }
+.account-logged-out { width: min(680px, 100%); }
+.account-logged-out h2 { margin: 0; font-size: 1.45rem; }
+.account-logged-out > p:not(.eyebrow) { margin: 10px 0 20px; color: var(--text-muted); font-size: .84rem; line-height: 1.6; }
+.account-loading {
+  width: min(680px, 100%);
+  min-height: 128px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--text-muted);
+}
+.account-loading p { margin: 0; }
+.account-loading-mark {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--flaxen);
+  box-shadow: 0 0 16px rgba(238, 210, 146, .36);
+}
+
 /* Footer */
 .site-footer { border-top: 1px solid var(--border-subtle); background: rgba(19, 19, 26, .78); }
 .site-footer-inner {
@@ -956,6 +1082,13 @@ p, h1, h2, h3 { text-wrap: pretty; }
   .site-page { padding: 48px 0 62px; }
   .page-intro { margin-bottom: 40px; }
   .page-intro h1 { font-size: clamp(2.65rem, 10vw, 4.2rem); }
+  .account-page { padding-top: 44px; }
+  .account-auth-layout { width: min(620px, calc(100% - 36px)); min-height: 0; grid-template-columns: minmax(0, 1fr); gap: 34px; }
+  .account-auth-intro h1 { max-width: 560px; font-size: clamp(2.8rem, 9vw, 4.2rem); }
+  .account-auth-intro .page-lede { margin-top: 15px; }
+  .account-auth-panel { padding: 23px; }
+  .account-panel { padding: 21px; }
+  .account-content { gap: 12px; }
   .builder-workspace { grid-template-columns: minmax(0, 1fr); }
   .builder-aside { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
   .save-build-panel { grid-column: auto; }
@@ -981,6 +1114,15 @@ p, h1, h2, h3 { text-wrap: pretty; }
   .home-cta { padding: 22px; }
   .home-cta .button { width: 100%; }
   .page-intro h1 { font-size: clamp(2.35rem, 11.5vw, 3.35rem); }
+  .account-auth-layout { width: calc(100% - 32px); gap: 28px; }
+  .account-auth-intro h1 { font-size: clamp(2.55rem, 12vw, 3.55rem); }
+  .account-auth-panel, .account-panel { padding: 18px; }
+  .account-profile-form, .account-security-form, .account-delete-form { grid-template-columns: minmax(0, 1fr); }
+  .account-form-actions { align-items: stretch; flex-direction: column; gap: 8px; }
+  .account-form-actions .button { width: 100%; }
+  .account-heading-row { align-items: flex-start; flex-direction: column; }
+  .account-logout { align-self: flex-start; }
+  .account-auth-switch { align-items: flex-start; flex-direction: column; }
   .eyebrow { font-size: .61rem; letter-spacing: .075em; }
   .section-index { font-size: .59rem; }
   .catalog-controls { grid-template-columns: minmax(0, 1fr); padding: 13px; }

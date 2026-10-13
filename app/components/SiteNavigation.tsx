@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type SitePage = "home" | "shop" | "builder";
+type SitePage = "home" | "shop" | "builder" | "account";
 
 const navigation = [
   { label: "Beranda", href: "/", page: "home" },
   { label: "Katalog", href: "/shop", page: "shop" },
   { label: "PC Builder", href: "/builder", page: "builder" },
+  { label: "Akun", href: "/account", page: "account" },
 ] as const;
 
 export function SiteHeader({ activePage }: { activePage: SitePage }) {
