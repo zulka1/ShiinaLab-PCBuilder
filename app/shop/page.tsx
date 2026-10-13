@@ -1,104 +1,50 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ShopCatalog } from "../components/ShopCatalog";
 import { SiteFooter, SiteHeader } from "../components/SiteNavigation";
 
 export const metadata: Metadata = {
-  title: "Shop | ShiinaLab",
-  description: "Preview the planned component catalog for ShiinaLab.",
+  title: "Katalog Komponen | ShiinaLab",
+  description: "Jelajahi katalog komponen PC demonstrasi ShiinaLab.",
 };
-
-const categories = [
-  "Processors",
-  "Graphics cards",
-  "Motherboards",
-  "Memory",
-  "Storage",
-  "Power supplies",
-  "Cases",
-];
-
-const productSlots = ["Processor", "Graphics card", "Motherboard"];
 
 export default function ShopPage() {
   return (
     <>
       <SiteHeader activePage="shop" />
-      <main className="site-page">
+      <main id="main-content" className="site-page">
         <div className="page-container">
           <section className="page-intro">
-            <p className="eyebrow"><span /> Component catalog / concept preview</p>
-            <h1>
-              Parts Store
-              <span className="grad-text">, taking shape.</span>
-            </h1>
+            <p className="eyebrow"><span /> Katalog / data demonstrasi</p>
+            <h1>Komponen PC, untuk <span className="grad-text">rancanganmu.</span></h1>
             <p className="page-lede">
-              A first look at how ShiinaLab could present PC components.
-              This is a static layout, not a live store.
+              Cari komponen berdasarkan nama atau spesifikasi, lalu tambahkan ke keranjang 
+              untuk mencoba alur katalog.
             </p>
             <p className="preview-note">
               <span className="preview-note-dot" />
-              Product listings, prices, and stock have not been provided yet.
+              Harga dan detail adalah mock data; katalog ini bukan toko aktif.
             </p>
           </section>
 
-          <section className="shop-section" aria-labelledby="categories-heading">
-            <div className="section-heading-row">
+          <section className="shop-section" aria-labelledby="catalog-heading">
+            <div className="section-title-row">
               <div>
-                <p className="eyebrow">Browse by type</p>
-                <h2 id="categories-heading">Planned categories</h2>
+                <p className="eyebrow">Parts Store</p>
+                <h2 id="catalog-heading">Jelajahi katalog</h2>
               </div>
-              <span className="section-index">01 / 02</span>
+              <span className="section-index">12 ITEM / MOCK</span>
             </div>
-            <div className="category-list" aria-label="Planned component categories">
-              {categories.map((category, index) => (
-                <span className="category-chip" key={category}>
-                  <span className="category-number">0{index + 1}</span>
-                  {category}
-                </span>
-              ))}
-            </div>
-          </section>
-
-          <section className="shop-section" aria-labelledby="products-heading">
-            <div className="section-heading-row">
-              <div>
-                <p className="eyebrow">Catalog layout</p>
-                <h2 id="products-heading">Product card preview</h2>
-              </div>
-              <span className="sample-label">Example layout only</span>
-            </div>
-
-            <div className="product-grid">
-              {productSlots.map((category, index) => (
-                <article className="product-card" key={category}>
-                  <div className="product-image-placeholder">
-                    <span className="placeholder-index">0{index + 1}</span>
-                    <span>Product image<br />not supplied</span>
-                    <span className="placeholder-corner" aria-hidden="true">+</span>
-                  </div>
-                  <div className="product-card-body">
-                    <p className="product-category">{category}</p>
-                    <h3>Product name</h3>
-                    <p className="product-description">Specifications will appear here.</p>
-                    <div className="product-card-bottom">
-                      <span className="product-price">Price not set</span>
-                      <span className="availability-label">Not listed</span>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <ShopCatalog />
           </section>
 
           <section className="next-step-panel" aria-labelledby="shop-next-heading">
             <div>
-              <p className="eyebrow">The other side of the build</p>
-              <h2 id="shop-next-heading">See the PC Builder layout</h2>
-              <p>Explore the companion page concept. Component selection is not active yet.</p>
+              <p className="eyebrow">Lanjutkan rancangan</p>
+              <h2 id="shop-next-heading">Susun komponen di PC Builder</h2>
+              <p>Uji ringkasan biaya dan pemeriksaan kompatibilitas pada data demonstrasi.</p>
             </div>
-            <Link className="button-secondary" href="/builder">
-              View PC Builder <span aria-hidden="true">↗</span>
-            </Link>
+            <Link className="button button-quiet" href="/builder">Buka PC Builder <span aria-hidden="true">↗</span></Link>
           </section>
         </div>
       </main>

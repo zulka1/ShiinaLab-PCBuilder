@@ -7,8 +7,9 @@
 - **Palette and typography:** CSS custom properties in `app/globals.css`; Geist Sans and Geist Mono are loaded in `app/layout.tsx`.
 - **Product imagery:** no approved component photography or product catalog assets have been supplied. The Shop wireframe uses clearly labelled image placeholders and does not imply real inventory.
 
-## Usage for the current static pages
+## Usage for the current prototype
 
 - Keep the existing dark charcoal and flaxen-gold palette, typography, and rounded geometry.
-- Use the Shop and PC Builder pages as static layout previews until real catalog data, product imagery, prices, and availability are confirmed.
-- Do not present placeholder content as purchasable stock or working simulation.
+- Shop and PC Builder support client-side interactions using mock catalog data. Treat prices, stock, performance, and compatibility as demonstrations until authoritative product data and logic are available.
+- Do not present mock catalog items as purchasable stock or sample manufacturer names as sponsors or partners.
+- Keep the marquee, if displayed, labeled as manufacturers named in mock data; it must not imply endorsement or partnership.

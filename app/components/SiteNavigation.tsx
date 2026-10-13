@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 type SitePage = "home" | "shop" | "builder";
 
 const navigation = [
-  { label: "Home", href: "/", page: "home" },
-  { label: "Shop", href: "/shop", page: "shop" },
+  { label: "Beranda", href: "/", page: "home" },
+  { label: "Katalog", href: "/shop", page: "shop" },
   { label: "PC Builder", href: "/builder", page: "builder" },
 ] as const;
 
@@ -45,7 +45,7 @@ export function SiteHeader({ activePage }: { activePage: SitePage }) {
           </span>
         </Link>
 
-        <nav className="site-desktop-nav" aria-label="Main navigation">
+        <nav className="site-desktop-nav" aria-label="Navigasi utama">
           {navigation.map((item) => (
             <Link
               key={item.page}
@@ -59,14 +59,14 @@ export function SiteHeader({ activePage }: { activePage: SitePage }) {
         </nav>
 
         <Link className="site-header-cta" href="/builder">
-          Start building
+          Mulai merakit
           <span aria-hidden="true">↗</span>
         </Link>
 
         <button
           className="site-menu-toggle"
           type="button"
-          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-label={menuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
           aria-expanded={menuOpen}
           aria-controls="site-mobile-navigation"
           onClick={() => setMenuOpen((open) => !open)}
@@ -79,7 +79,7 @@ export function SiteHeader({ activePage }: { activePage: SitePage }) {
       <nav
         id="site-mobile-navigation"
         className={`site-mobile-nav${menuOpen ? " is-open" : ""}`}
-        aria-label="Mobile navigation"
+        aria-label="Navigasi seluler"
         hidden={!menuOpen}
       >
         {navigation.map((item) => (
@@ -104,16 +104,16 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="site-footer-inner">
         <Link className="site-footer-brand" href="/">
-          ShiinaLab <span>Build. Analyze. Optimize.</span>
+          ShiinaLab <span>Rakit. Analisis. Optimalkan.</span>
         </Link>
-        <nav className="site-footer-nav" aria-label="Footer navigation">
+        <nav className="site-footer-nav" aria-label="Navigasi footer">
           {navigation.map((item) => (
             <Link key={item.page} href={item.href}>
               {item.label}
             </Link>
           ))}
         </nav>
-        <p>Static concept preview. Product availability is not yet defined.</p>
+        <p>By Zulka Group</p>
       </div>
     </footer>
   );
