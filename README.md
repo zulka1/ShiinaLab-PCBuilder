@@ -18,7 +18,7 @@ Pada Milestone 1, proyek berfokus pada antarmuka responsif dan interaksi awal de
 - **Katalog:** pencarian, filter kategori, pengurutan harga, spesifikasi, serta keranjang simulasi.
 - **PC Builder:** pemilihan tujuh kategori komponen, estimasi biaya, pemeriksaan dasar socket/tipe memori/ukuran casing/daya PSU, dan formulir penyimpanan rancangan.
 - **Validasi form:** nama rakitan dibatasi 3–40 karakter dan anggaran harus lebih besar dari Rp0; pesan kesalahan ditampilkan pada field terkait.
-- **Penyimpanan lokal:** rancangan tersimpan di browser untuk demonstrasi, bukan dikirim ke server atau database.
+- **Penyimpanan lokal:** rancangan dienkripsi dengan AES-256-GCM dan disimpan di browser untuk demonstrasi, bukan dikirim ke server atau database. Frasa kunci tidak disimpan; pengguna harus mengingatnya.
 - **Mock data:** komponen, spesifikasi, dan harga contoh tersedia di `app/data/mock-products.ts`.
 
 ## Teknologi

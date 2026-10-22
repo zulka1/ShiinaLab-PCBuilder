@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:crypto": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types --test app/lib/saved-build-crypto.test.mjs"
   },
   "dependencies": {
     "argon2": "^0.45.1",

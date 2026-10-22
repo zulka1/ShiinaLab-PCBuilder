@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
+import { decryptJson, encryptJson, isEncryptedBuilds } from "../lib/saved-build-crypto";
 import {
   builderCategories,
   categoryLabels,
@@ -51,6 +52,13 @@ function isSavedBuild(value: unknown): value is SavedBuild {
     "savedAt" in value &&
     typeof value.savedAt === "string"
   );
+}
+
+function parseBuildList(value: unknown): SavedBuild[] {
+  if (!Array.isArray(value) || !value.every(isSavedBuild)) {
+    throw new Error("Format data rakitan tidak valid.");
+  }
+  return value;
 }
 
 function getSelectedProduct(category: ProductCategory, id?: string) {
@@ -234,26 +242,78 @@ function BuildSummary({ selected, total, selectedCount }: {
 function SaveBuildForm({ total }: { total: number }) {
   const [name, setName] = useState("");
   const [budget, setBudget] = useState("");
-  const [errors, setErrors] = useState<{ name?: string; budget?: string }>({});
+  const [passphrase, setPassphrase] = useState("");
+  const [errors, setErrors] = useState<{ name?: string; budget?: string; passphrase?: string }>({});
   const [notice, setNotice] = useState("");
+  const [decryptedBuilds, setDecryptedBuilds] = useState<{
+    snapshot: string;
+    passphrase: string;
+    builds: SavedBuild[];
+  } | null>(null);
+  const [decryptFailure, setDecryptFailure] = useState<{ snapshot: string; passphrase: string } | null>(null);
+  const [saving, setSaving] = useState(false);
   const storedBuildsSnapshot = useSyncExternalStore(
     subscribeToSavedBuilds,
     getSavedBuildsSnapshot,
     getServerSavedBuildsSnapshot,
   );
-  const savedBuilds = useMemo(() => {
-    if (storedBuildsSnapshot === storageUnavailable) return null;
+  const storedBuilds = useMemo(() => {
+    if (storedBuildsSnapshot === storageUnavailable) return { kind: "unavailable" as const };
     try {
-      const parsed: unknown = JSON.parse(storedBuildsSnapshot);
-      return Array.isArray(parsed) ? parsed.filter(isSavedBuild) : [];
+      const value: unknown = JSON.parse(storedBuildsSnapshot);
+      if (Array.isArray(value)) {
+        return { kind: "legacy" as const, builds: parseBuildList(value) };
+      }
+      if (isEncryptedBuilds(value)) return { kind: "encrypted" as const, payload: value };
+      return { kind: "invalid" as const };
     } catch {
-      return null;
+      return { kind: "invalid" as const };
     }
   }, [storedBuildsSnapshot]);
 
-  function saveBuild(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    let active = true;
+    if (storedBuilds.kind === "encrypted" && passphrase) {
+      void decryptJson<unknown>(storedBuilds.payload, passphrase).then((value) => {
+        if (active) {
+          setDecryptedBuilds({
+            snapshot: storedBuildsSnapshot,
+            passphrase,
+            builds: parseBuildList(value),
+          });
+        }
+      }).catch(() => {
+        if (active) setDecryptFailure({ snapshot: storedBuildsSnapshot, passphrase });
+      });
+    }
+
+    return () => { active = false; };
+  }, [passphrase, storedBuilds, storedBuildsSnapshot]);
+
+  const savedBuilds = storedBuilds.kind === "legacy"
+    ? storedBuilds.builds
+    : storedBuilds.kind === "encrypted" &&
+        decryptedBuilds?.snapshot === storedBuildsSnapshot &&
+        decryptedBuilds.passphrase === passphrase
+      ? decryptedBuilds.builds
+      : null;
+  const storageMessage = storedBuilds.kind === "unavailable"
+    ? "Penyimpanan browser tidak dapat dibaca."
+    : storedBuilds.kind === "invalid"
+      ? "Data rakitan tersimpan tidak valid dan tidak dapat dibuka."
+      : storedBuilds.kind === "legacy" && storedBuilds.builds.length > 0
+        ? "Data lama belum terenkripsi. Data akan dienkripsi saat disimpan kembali."
+        : storedBuilds.kind === "encrypted" && !passphrase
+          ? "Masukkan frasa kunci untuk membuka rakitan terenkripsi."
+          : storedBuilds.kind === "encrypted" && savedBuilds === null
+            ? decryptFailure?.snapshot === storedBuildsSnapshot && decryptFailure.passphrase === passphrase
+              ? "Frasa kunci salah atau data terenkripsi telah rusak."
+              : "Membuka rakitan terenkripsi..."
+            : "";
+
+  async function saveBuild(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const nextErrors: { name?: string; budget?: string } = {};
+    const nextErrors: { name?: string; budget?: string; passphrase?: string } = {};
     const trimmedName = name.trim();
     const budgetAmount = Number(budget);
 
@@ -263,21 +323,43 @@ function SaveBuildForm({ total }: { total: number }) {
     if (!budget || !Number.isFinite(budgetAmount) || budgetAmount <= 0) {
       nextErrors.budget = "Masukkan anggaran lebih besar dari Rp0.";
     }
+    if (passphrase.length < 12) {
+      nextErrors.passphrase = "Frasa kunci harus terdiri dari minimal 12 karakter.";
+    }
 
     setErrors(nextErrors);
     setNotice("");
     if (Object.keys(nextErrors).length > 0) return;
 
-    const savedAt = new Date().toISOString();
-    const nextBuilds = [{ name: trimmedName, budget: budgetAmount, total, savedAt }, ...(savedBuilds ?? [])];
-
+    setSaving(true);
     try {
-      window.localStorage.setItem(savedBuildsKey, JSON.stringify(nextBuilds));
+      const storedValue = window.localStorage.getItem(savedBuildsKey);
+      let existingBuilds: SavedBuild[] = [];
+      if (storedValue) {
+        const parsed: unknown = JSON.parse(storedValue);
+        existingBuilds = isEncryptedBuilds(parsed)
+          ? parseBuildList(await decryptJson<unknown>(parsed, passphrase))
+          : parseBuildList(parsed);
+      }
+      const nextBuilds = [
+        { name: trimmedName, budget: budgetAmount, total, savedAt: new Date().toISOString() },
+        ...existingBuilds,
+      ];
+      const encrypted = await encryptJson(nextBuilds, passphrase);
+      window.localStorage.setItem(savedBuildsKey, JSON.stringify(encrypted));
       window.dispatchEvent(new Event(savedBuildsEvent));
-      setNotice(`Rakitan “${trimmedName}” tersimpan di perangkat ini.`);
+      setNotice(`Rakitan “${trimmedName}” dienkripsi dan tersimpan di perangkat ini.`);
       setName("");
-    } catch {
-      setNotice("Rakitan belum dapat disimpan di perangkat ini. Periksa pengaturan penyimpanan browser.");
+    } catch (error) {
+      setNotice(
+        error instanceof Error && error.name === "OperationError"
+          ? "Frasa kunci salah atau data lama tidak dapat didekripsi. Rakitan baru tidak disimpan."
+          : error instanceof Error
+            ? `Rakitan belum tersimpan: ${error.message}`
+            : "Rakitan belum tersimpan karena terjadi kesalahan yang tidak diketahui.",
+      );
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -286,7 +368,10 @@ function SaveBuildForm({ total }: { total: number }) {
       <div>
         <p className="eyebrow">Simpan rancangan</p>
         <h2 id="save-build-heading">Beri nama rakitanmu</h2>
-        <p className="save-build-copy">Data hanya tersimpan di browser ini; belum dikirim ke server.</p>
+        <p className="save-build-copy">
+          Data rakitan dienkripsi dengan AES-GCM sebelum disimpan di browser. Frasa kunci tidak disimpan;
+          gunakan frasa yang sama untuk membukanya dan simpan frasa itu dengan aman.
+        </p>
       </div>
       <form className="save-build-form" onSubmit={saveBuild} noValidate>
         <div className="form-field">
@@ -320,14 +405,32 @@ function SaveBuildForm({ total }: { total: number }) {
           />
           {errors.budget && <small className="field-error" id="build-budget-error" role="alert">{errors.budget}</small>}
         </div>
-        <button className="button button-primary" type="submit">Simpan rakitan</button>
+        <div className="form-field">
+          <label htmlFor="build-passphrase">Frasa kunci enkripsi</label>
+          <input
+            id="build-passphrase"
+            type="password"
+            autoComplete="new-password"
+            value={passphrase}
+            aria-invalid={Boolean(errors.passphrase)}
+            aria-describedby={errors.passphrase ? "build-passphrase-error" : "build-passphrase-hint"}
+            onChange={(event) => setPassphrase(event.target.value)}
+            placeholder="Minimal 12 karakter"
+          />
+          {errors.passphrase
+            ? <small className="field-error" id="build-passphrase-error" role="alert">{errors.passphrase}</small>
+            : <small className="field-error" id="build-passphrase-hint">Frasa yang sama diperlukan untuk membuka rakitan.</small>}
+        </div>
+        <button className="button button-primary" type="submit" disabled={saving}>
+          {saving ? "Mengenkripsi..." : "Simpan rakitan"}
+        </button>
       </form>
       <p className="form-feedback" role="status" aria-live="polite">
-        {notice || (savedBuilds === null ? "Rakitan tersimpan sebelumnya tidak dapat dibaca dari penyimpanan browser." : "")}
+        {notice || storageMessage}
       </p>
       {savedBuilds && savedBuilds.length > 0 && (
         <div className="saved-builds">
-          <h3>Rakitan tersimpan di sesi ini</h3>
+          <h3>Rakitan tersimpan terenkripsi di browser ini</h3>
           <ul>
             {savedBuilds.map((build) => (
               <li key={`${build.name}-${build.savedAt}`}>
