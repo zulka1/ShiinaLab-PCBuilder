@@ -99,6 +99,8 @@ app/
 - **Perilaku `template.tsx`:** Jika menggunakan template, Next.js menyematkan *key* unik untuk setiap segmen anak sehingga seluruh pohon DOM di dalamnya akan dibuat ulang (*remount*) dan state akan kembali ke nilai awal ketika segmen rute berubah.
 
 ### Tangkapan Layar loading.tsx dan error.tsx
+<img width="1917" height="1073" alt="Screenshot 2026-10-23 125653" src="https://github.com/user-attachments/assets/21337fba-2ce4-4404-b9f8-8a00b3ddbb13" />
+<img width="1917" height="1078" alt="Screenshot 2026-10-23 125720" src="https://github.com/user-attachments/assets/6af62ca5-01aa-459e-9c48-5ddf31b5f22e" />
 
 ---
 
