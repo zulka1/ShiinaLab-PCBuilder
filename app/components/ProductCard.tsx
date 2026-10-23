@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { categoryLabels, formatRupiah, type Product } from "../data/mock-products";
 
 export function ProductCard({
@@ -9,14 +10,25 @@ export function ProductCard({
 }) {
   return (
     <article className="product-card">
-      <div className="product-visual" aria-hidden="true">
+      <Link
+        href={`/shop/${product.id}`}
+        className="product-visual block"
+        aria-label={`Lihat detail ${product.name}`}
+      >
         <span className="product-visual-index">{product.id.slice(-2).toUpperCase()}</span>
         <span className="product-visual-label">{categoryLabels[product.category]}</span>
-        <span className="product-visual-mark">Gambar belum tersedia</span>
-      </div>
+        <span className="product-visual-mark">Lihat Detail &rarr;</span>
+      </Link>
       <div className="product-card-body">
         <p className="product-category">{categoryLabels[product.category]}</p>
-        <h3>{product.name}</h3>
+        <h3>
+          <Link
+            href={`/shop/${product.id}`}
+            className="hover:text-amber-200 transition-colors"
+          >
+            {product.name}
+          </Link>
+        </h3>
         <p className="product-description">{product.description}</p>
         <ul className="specification-list" aria-label={`Spesifikasi ${product.name}`}>
           {product.specifications.map((specification) => (
@@ -28,14 +40,23 @@ export function ProductCard({
             <span className="product-price-label">Harga mock</span>
             <strong className="product-price">{formatRupiah(product.price)}</strong>
           </div>
-          <button
-            className="button button-quiet product-add-button"
-            type="button"
-            onClick={() => onAdd(product)}
-            aria-label={`Tambahkan ${product.name} ke keranjang simulasi`}
-          >
-            Tambah
-          </button>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <Link
+              href={`/shop/${product.id}`}
+              className="button button-quiet"
+              aria-label={`Detail ${product.name}`}
+            >
+              Detail
+            </Link>
+            <button
+              className="button button-quiet product-add-button"
+              type="button"
+              onClick={() => onAdd(product)}
+              aria-label={`Tambahkan ${product.name} ke keranjang simulasi`}
+            >
+              Tambah
+            </button>
+          </div>
         </div>
       </div>
     </article>

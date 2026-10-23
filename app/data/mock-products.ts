@@ -164,3 +164,8 @@ export const formatRupiah = (amount: number) =>
     currency: "IDR",
     maximumFractionDigits: 0,
   }).format(amount);
+
+
+export function getProductById(id: string): Product | undefined {
+  return mockProducts.find((product) => product.id === id);
+}
