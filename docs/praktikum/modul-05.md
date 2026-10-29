@@ -218,6 +218,10 @@ Untuk membuktikan bahwa validasi di sisi server tetap bekerja meskipun validasi 
 
 ### Tangkapan Layar Galat per Kolom
 
+<img width="1916" height="866" alt="Screenshot 2026-10-30 060000" src="https://github.com/user-attachments/assets/2679a265-bdad-4fb4-9975-8ee6975de1ed" />
+<img width="1917" height="863" alt="Screenshot 2026-10-30 055933" src="https://github.com/user-attachments/assets/265d2109-f945-47db-8c23-612a8f6e3c0c" />
+<img width="1917" height="865" alt="Screenshot 2026-10-30 055905" src="https://github.com/user-attachments/assets/88bbfd34-b0ac-49b9-b225-2b36438dcb80" />
+<img width="1901" height="867" alt="Screenshot 2026-10-30 010056" src="https://github.com/user-attachments/assets/357cb0f4-e622-4cad-85cb-cf8ae72ecbe7" />
 
 
 ---
@@ -246,7 +250,9 @@ Pada pengujian login akun demo:
 - **Pemeriksaan `document.cookie` di Panel Console:**
   Mengetikkan `document.cookie` di Console menghasilkan string kosong `""` (tidak memuat cookie `sesi` karena dilindungi atribut `HttpOnly`).
 
-> *(Lampirkan tangkapan layar DevTools Panel Application > Cookies dan Panel Network > Header Set-Cookie dengan nilai cookie yang telah disamarkan/sensor)*
+<img width="985" height="771" alt="Screenshot 2026-10-30 054757" src="https://github.com/user-attachments/assets/bfdb796b-52b5-4092-a990-d6debcbddb8a" />
+<img width="983" height="791" alt="Screenshot 2026-10-30 054628" src="https://github.com/user-attachments/assets/50d33e8f-9286-410d-9fb1-1862de599362" />
+
 
 
 ### Hasil Uji Keamanan Sesi: Cookie Palsu, Logout, dan Cookie Lama Setelah Logout
