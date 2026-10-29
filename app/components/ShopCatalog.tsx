@@ -6,7 +6,11 @@ import { ProductCard } from "./ProductCard";
 
 const categories = ["Semua kategori", ...Object.values(categoryLabels)];
 
-export function ShopCatalog() {
+export function ShopCatalog({
+  initialProducts = mockProducts,
+}: {
+  initialProducts?: Product[];
+}) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Semua kategori");
   const [sort, setSort] = useState("recommended");
@@ -14,7 +18,7 @@ export function ShopCatalog() {
   const [notice, setNotice] = useState("");
 
   const visibleProducts = useMemo(() => {
-    const filtered = mockProducts.filter((product) => {
+    const filtered = initialProducts.filter((product) => {
       const matchesQuery = `${product.name} ${product.description} ${product.specifications.join(" ")}`
         .toLocaleLowerCase("id")
         .includes(query.toLocaleLowerCase("id"));
@@ -28,7 +32,7 @@ export function ShopCatalog() {
       if (sort === "price-descending") return second.price - first.price;
       return first.name.localeCompare(second.name);
     });
-  }, [category, query, sort]);
+  }, [category, initialProducts, query, sort]);
 
   function addToCart(product: Product) {
     setCart((currentCart) => [...currentCart, product]);

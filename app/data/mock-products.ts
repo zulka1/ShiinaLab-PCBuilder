@@ -1,3 +1,5 @@
+import type { MasukanKomponen } from "@/lib/skema";
+
 export type ProductCategory =
   | "Processor"
   | "Motherboard"
@@ -14,6 +16,7 @@ export type Product = {
   price: number;
   description: string;
   specifications: string[];
+  available?: boolean;
   socket?: string;
   memoryType?: "DDR4" | "DDR5";
   formFactor?: "ATX" | "Micro-ATX" | "Mini-ITX";
@@ -32,7 +35,7 @@ export const categoryLabels: Record<ProductCategory, string> = {
   Case: "Casing",
 };
 
-export const mockProducts: Product[] = [
+const initialMockProducts: Product[] = [
   {
     id: "cpu-ryzen-7600",
     name: "AMD Ryzen 5 7600",
@@ -148,6 +151,13 @@ export const mockProducts: Product[] = [
   },
 ];
 
+const globalStore = globalThis as unknown as {
+  shiinaMockProducts?: Product[];
+};
+
+export const mockProducts: Product[] =
+  (globalStore.shiinaMockProducts ??= [...initialMockProducts]);
+
 export const builderCategories: ProductCategory[] = [
   "Processor",
   "Motherboard",
@@ -165,7 +175,33 @@ export const formatRupiah = (amount: number) =>
     maximumFractionDigits: 0,
   }).format(amount);
 
-
 export function getProductById(id: string): Product | undefined {
   return mockProducts.find((product) => product.id === id);
+}
+
+export function namaSudahAda(nama: string): boolean {
+  const dicari = nama.trim().toLowerCase();
+  return mockProducts.some((product) => product.name.toLowerCase() === dicari);
+}
+
+export function tambahKomponen(masukan: MasukanKomponen): Product {
+  const slugBase = masukan.nama
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  const id = slugBase || `komponen-${mockProducts.length + 1}`;
+  const item: Product = {
+    id,
+    name: masukan.nama,
+    category: masukan.kategori,
+    price: masukan.harga,
+    description: masukan.deskripsi,
+    available: masukan.tersedia,
+    specifications: [
+      categoryLabels[masukan.kategori],
+      masukan.tersedia ? "Tersedia" : "Stok Kosong",
+    ],
+  };
+  mockProducts.push(item);
+  return item;
 }

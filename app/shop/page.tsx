@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ShopCatalog } from "../components/ShopCatalog";
 import { SiteFooter, SiteHeader } from "../components/SiteNavigation";
+import { mockProducts } from "../data/mock-products";
 
 export const metadata: Metadata = {
   title: "Katalog Komponen | ShiinaLab",
@@ -21,10 +22,15 @@ export default function ShopPage() {
               Cari komponen berdasarkan nama atau spesifikasi, lalu tambahkan ke keranjang 
               untuk mencoba alur katalog.
             </p>
-            <p className="preview-note">
-              <span className="preview-note-dot" />
-              Harga dan detail adalah mock data; katalog ini bukan toko aktif.
-            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-4">
+              <p className="preview-note">
+                <span className="preview-note-dot" />
+                Harga dan detail adalah mock data; katalog ini bukan toko aktif.
+              </p>
+              <Link className="button button-primary" href="/shop/tambah">
+                + Tambah Komponen
+              </Link>
+            </div>
           </section>
 
           <section className="shop-section" aria-labelledby="catalog-heading">
@@ -33,9 +39,9 @@ export default function ShopPage() {
                 <p className="eyebrow">Parts Store</p>
                 <h2 id="catalog-heading">Jelajahi katalog</h2>
               </div>
-              <span className="section-index">12 ITEM / MOCK</span>
+              <span className="section-index">{mockProducts.length} ITEM / MOCK</span>
             </div>
-            <ShopCatalog />
+            <ShopCatalog initialProducts={mockProducts} />
           </section>
 
           <section className="next-step-panel" aria-labelledby="shop-next-heading">
