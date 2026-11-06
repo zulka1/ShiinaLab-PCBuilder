@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Kategori {
+  Processor
+  Motherboard
+  GraphicsCard
+  Memory
+  Storage
+  PowerSupply
+  Case
+}
+
+model Komponen {
+  id         Int       @id @default(autoincrement())
+  nama       String    @unique
+  kategori   Kategori
+  harga      Int
+  deskripsi  String
+  tersedia   Boolean   @default(true)
+  gambar     String?
+  dibuatPada DateTime  @default(now())
+  ulasan     Ulasan[]
+}
+
+model Ulasan {
+  id         Int       @id @default(autoincrement())
+  nama       String
+  nilai      Int
+  komentar   String
+  dibuatPada DateTime  @default(now())
+  komponenId Int
+  komponen   Komponen  @relation(fields: [komponenId], references: [id], onDelete: Restrict)
+
+  @@unique([komponenId, nama])
+}
