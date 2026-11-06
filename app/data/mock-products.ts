@@ -4,9 +4,11 @@ export type ProductCategory =
   | "Processor"
   | "Motherboard"
   | "Graphics card"
+  | "GraphicsCard"
   | "Memory"
   | "Storage"
   | "Power supply"
+  | "PowerSupply"
   | "Case";
 
 export type Product = {
@@ -29,9 +31,11 @@ export const categoryLabels: Record<ProductCategory, string> = {
   Processor: "Prosesor",
   Motherboard: "Motherboard",
   "Graphics card": "Kartu grafis",
+  GraphicsCard: "Kartu grafis",
   Memory: "Memori",
   Storage: "Penyimpanan",
   "Power supply": "Power supply",
+  PowerSupply: "Power supply",
   Case: "Casing",
 };
 
@@ -198,7 +202,7 @@ export function tambahKomponen(masukan: MasukanKomponen): Product {
     description: masukan.deskripsi,
     available: masukan.tersedia,
     specifications: [
-      categoryLabels[masukan.kategori],
+      categoryLabels[masukan.kategori] ?? masukan.kategori,
       masukan.tersedia ? "Tersedia" : "Stok Kosong",
     ],
   };

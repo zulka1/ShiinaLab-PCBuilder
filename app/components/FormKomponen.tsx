@@ -16,6 +16,23 @@ export default function FormKomponen() {
 
   return (
     <form action={aksi} className="mt-6 space-y-5">
+      {status.pesan && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`rounded-lg p-3 text-sm font-medium border ${
+            g ||
+            status.pesan.includes("Gagal") ||
+            status.pesan.includes("salah") ||
+            status.pesan.includes("kembali")
+              ? "bg-red-950/70 border-red-700 text-red-200"
+              : "bg-emerald-950/70 border-emerald-700 text-emerald-200"
+          }`}
+        >
+          {status.pesan}
+        </div>
+      )}
+
       <div>
         <label htmlFor="nama" className="block text-sm font-medium text-neutral-200">
           Nama Komponen
@@ -32,9 +49,11 @@ export default function FormKomponen() {
           aria-invalid={!!g?.nama}
           aria-describedby="galat-nama"
         />
-        <p id="galat-nama" className="mt-1 text-sm text-red-400">
-          {g?.nama?.[0]}
-        </p>
+        {g?.nama && (
+          <p id="galat-nama" className="mt-1.5 text-sm text-red-400 font-medium">
+            {g.nama[0]}
+          </p>
+        )}
       </div>
 
       <div>
@@ -60,9 +79,11 @@ export default function FormKomponen() {
             </option>
           ))}
         </select>
-        <p id="galat-kategori" className="mt-1 text-sm text-red-400">
-          {g?.kategori?.[0]}
-        </p>
+        {g?.kategori && (
+          <p id="galat-kategori" className="mt-1.5 text-sm text-red-400 font-medium">
+            {g.kategori[0]}
+          </p>
+        )}
       </div>
 
       <div>
@@ -77,14 +98,16 @@ export default function FormKomponen() {
           min={10000}
           max={100000000}
           defaultValue={n?.harga}
-          placeholder="Contoh: 3150000"
+          placeholder="Contoh: 3500000"
           className={kolom}
           aria-invalid={!!g?.harga}
           aria-describedby="galat-harga"
         />
-        <p id="galat-harga" className="mt-1 text-sm text-red-400">
-          {g?.harga?.[0]}
-        </p>
+        {g?.harga && (
+          <p id="galat-harga" className="mt-1.5 text-sm text-red-400 font-medium">
+            {g.harga[0]}
+          </p>
+        )}
       </div>
 
       <div>
@@ -104,9 +127,11 @@ export default function FormKomponen() {
           aria-invalid={!!g?.deskripsi}
           aria-describedby="galat-deskripsi"
         />
-        <p id="galat-deskripsi" className="mt-1 text-sm text-red-400">
-          {g?.deskripsi?.[0]}
-        </p>
+        {g?.deskripsi && (
+          <p id="galat-deskripsi" className="mt-1.5 text-sm text-red-400 font-medium">
+            {g.deskripsi[0]}
+          </p>
+        )}
       </div>
 
       <label className="flex items-center gap-2 text-sm text-neutral-200">
@@ -121,11 +146,6 @@ export default function FormKomponen() {
       >
         {pending ? "Menyimpan..." : "Simpan Komponen"}
       </button>
-
-      <p role="status" aria-live="polite" className="text-sm text-amber-300">
-        {status.pesan}
-      </p>
     </form>
   );
 }
-
