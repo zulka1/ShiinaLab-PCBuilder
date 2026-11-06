@@ -193,6 +193,9 @@ Struktur tersebut membuktikan keberadaan:
 - Indeks Unik Gabungan: `Ulasan_komponenId_nama_key` pada pasangan kolom `("komponenId", "nama")`.
 - Foreign Key Constraint: `Ulasan_komponenId_fkey` yang mengikat `komponenId` ke `Komponen(id)` dengan klausul `ON DELETE RESTRICT`.
 
+<img width="1497" height="775" alt="Screenshot 2026-11-06 102313" src="https://github.com/user-attachments/assets/2d6c86f7-87ea-4e39-9bfb-c27eb8b0ea16" />
+
+
 ---
 
 ## 3. Seed dan Prisma Client
@@ -324,6 +327,9 @@ try {
   throw e;
 }
 ```
+
+<img width="1427" height="867" alt="Screenshot 2026-11-06 103543" src="https://github.com/user-attachments/assets/ed1804f9-2258-44da-b7ec-9882da41b97b" />
+
 
 ---
 
