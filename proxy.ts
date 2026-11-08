@@ -10,6 +10,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/shop/tambah"],
+  matcher: ["/shop/tambah", "/admin", "/account"],
 };
-

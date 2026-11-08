@@ -1,6 +1,8 @@
 import argon2 from "argon2";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { Prisma } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
+import { buatSesi } from "@/lib/sesi";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -8,7 +10,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export async function POST(request: Request) {
   let body: unknown;
-
   try {
     body = await request.json();
   } catch {
@@ -19,57 +20,62 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Data pendaftaran tidak valid." }, { status: 400 });
   }
 
-  const username = body.username;
-  const password = body.password;
+  const username = typeof body.username === "string" ? body.username.trim() : "";
+  const email = typeof body.email === "string" ? body.email.trim() : `${username}@shiinalab.io`;
+  const fullName = typeof body.fullName === "string" ? body.fullName.trim() : username;
+  const password = typeof body.password === "string" ? body.password : "";
 
-  if (typeof username !== "string" || typeof password !== "string") {
-    return NextResponse.json({ error: "Username dan password wajib diisi." }, { status: 400 });
-  }
-
-  const cleanUsername = username.trim();
-  if (!/^[a-zA-Z0-9_]{3,24}$/.test(cleanUsername)) {
+  if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
     return NextResponse.json(
-      { error: "Username harus 3–24 karakter: huruf, angka, atau garis bawah." },
+      { error: "Username harus 3-24 karakter (huruf, angka, atau garis bawah)." },
       { status: 400 },
     );
   }
 
-  if (
-    password.length < 8 ||
-    password.length > 128 ||
-    Buffer.byteLength(password, "utf8") > 1024
-  ) {
+  if (password.length < 8 || password.length > 128) {
     return NextResponse.json(
-      { error: "Password harus 8–128 karakter dan maksimal 1024 byte UTF-8." },
+      { error: "Kata sandi minimal 8 karakter." },
       { status: 400 },
     );
   }
-
-  const existingUser = db
-    .prepare("SELECT id FROM users WHERE username = ?")
-    .get(cleanUsername);
-
-  if (existingUser) {
-    return NextResponse.json({ error: "Username sudah digunakan." }, { status: 409 });
-  }
-
-  const passwordHash = await argon2.hash(password, { type: argon2.argon2id });
 
   try {
-    db.prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)")
-      .run(cleanUsername, passwordHash);
-  } catch (error) {
-    // Periksa lagi agar dua pendaftaran bersamaan tetap mendapat respons konflik.
-    const createdByAnotherRequest = db
-      .prepare("SELECT id FROM users WHERE username = ?")
-      .get(cleanUsername);
+    const passwordHash = await argon2.hash(password, { type: argon2.argon2id });
+    const pengguna = await prisma.pengguna.create({
+      data: {
+        username,
+        email,
+        namaLengkap: fullName,
+        passwordHash,
+        peran: "user",
+      },
+    });
 
-    if (createdByAnotherRequest) {
-      return NextResponse.json({ error: "Username sudah digunakan." }, { status: 409 });
+    await buatSesi(pengguna.id);
+
+    return NextResponse.json(
+      {
+        message: "Akun berhasil dibuat.",
+        user: {
+          id: pengguna.id,
+          username: pengguna.username,
+          email: pengguna.email,
+          fullName: pengguna.namaLengkap,
+          role: pengguna.peran,
+        },
+      },
+      { status: 201 },
+    );
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+      return NextResponse.json(
+        { error: "Username atau email sudah terdaftar." },
+        { status: 409 },
+      );
     }
-
-    throw error;
+    return NextResponse.json(
+      { error: "Gagal membuat akun." },
+      { status: 500 },
+    );
   }
-
-  return NextResponse.json({ message: "Akun berhasil dibuat." }, { status: 201 });
 }

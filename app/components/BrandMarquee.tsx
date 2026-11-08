@@ -1,40 +1,31 @@
-const mockBrands = [
-  "AMD",
+const partnerBrands = [
+  "NVIDIA",
   "Intel",
-  "MSI",
-  "ASUS",
+  "AMD",
+  "ASUS ROG",
   "Corsair",
+  "Lian Li",
+  "NZXT",
+  "MSI",
+  "Gigabyte",
+  "Western Digital",
   "Kingston",
-  "WD Black",
-  "Cooler Master",
-  "FSP",
-  "DeepCool",
-  "Sapphire",
+  "Samsung",
 ];
 
 export function BrandMarquee() {
   return (
-    <section className="brand-marquee" aria-labelledby="brand-marquee-heading">
-      <div className="brand-marquee-heading">
-        <p className="eyebrow" id="brand-marquee-heading">Merek pada data demonstrasi</p>
-        <span>Bukan daftar sponsor atau mitra resmi</span>
-      </div>
-      <ul className="visually-hidden">
-        {mockBrands.map((brand) => <li key={brand}>{brand}</li>)}
-      </ul>
-      <div className="brand-marquee-viewport" aria-hidden="true">
-        <div className="brand-marquee-track">
-          {[0, 1].map((copy) => (
-            <div className={`brand-marquee-group${copy > 0 ? " is-copy" : ""}`} key={copy}>
-              {mockBrands.map((brand) => (
-                <span className="brand-marquee-item" key={`${copy}-${brand}`}>
-                  {brand}
-                  <span className="brand-marquee-separator" />
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
+    <section aria-label="Supported Hardware Brands" className="w-full py-4">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        {partnerBrands.map((brand) => (
+          <div
+            key={brand}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200/80 shadow-2xs text-xs font-bold text-slate-700 hover:border-blue-300 hover:text-blue-600 transition"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600" aria-hidden="true" />
+            <span>{brand}</span>
+          </div>
+        ))}
       </div>
     </section>
   );

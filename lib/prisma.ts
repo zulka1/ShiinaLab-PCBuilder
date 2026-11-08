@@ -2,21 +2,14 @@ import "server-only";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
 
-const globalUntukPrisma = globalThis as unknown as {
-  prisma?: PrismaClient;
-};
+const g = globalThis as unknown as { prisma?: PrismaClient };
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 
-function buatClient() {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL tidak ditemukan pada environment variables.");
-  }
-  const adapter = new PrismaPg({ connectionString });
-  return new PrismaClient({ adapter });
-}
+export const prisma =
+  g.prisma ??
+  new PrismaClient({
+    adapter,
+    log: ["query", "warn", "error"],
+  });
 
-export const prisma = globalUntukPrisma.prisma ?? buatClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalUntukPrisma.prisma = prisma;
-}
+if (process.env.NODE_ENV !== "production") g.prisma = prisma;

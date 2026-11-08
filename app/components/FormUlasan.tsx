@@ -1,12 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { tambahUlasan } from "@/app/shop/ulasan-actions";
 import type { StatusForm } from "@/lib/status-form";
 
 const awal: StatusForm = {};
 const inputClass =
-  "mt-1 block w-full rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-white placeholder-neutral-500 focus:border-amber-400 focus:outline-none text-sm";
+  "mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 text-xs font-medium transition";
 
 export default function FormUlasan({ komponenId }: { komponenId: number }) {
   const [status, aksi, pending] = useActionState(
@@ -15,17 +15,28 @@ export default function FormUlasan({ komponenId }: { komponenId: number }) {
   );
   const g = status.galat;
 
+  // MODUL 7 PERBAIKAN: Nilai turunan dihitung langsung saat render (tanpa useEffect & state ganda)
+  const [isi, setIsi] = useState("");
+  const sisa = 280 - isi.length;
+
   return (
-    <form action={aksi} className="mt-6 rounded-xl border border-neutral-800 bg-neutral-900/50 p-5 space-y-4">
-      <h3 className="text-lg font-semibold text-white">Tulis Ulasan Pengalaman</h3>
-      
+    <form action={aksi} className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
+      <div>
+        <h3 className="text-sm font-extrabold text-slate-950 uppercase tracking-wider">
+          Write a Review
+        </h3>
+        <p className="text-xs text-slate-500 mt-0.5">
+          Share your build impressions and thermal test observations.
+        </p>
+      </div>
+
       {status.pesan && (
         <div
           role="status"
-          className={`rounded-lg p-3 text-sm font-medium ${
+          className={`rounded-2xl p-3 text-xs font-bold ${
             status.pesan.includes("berhasil") || status.pesan.includes("tersimpan")
-              ? "bg-emerald-950/60 border border-emerald-700 text-emerald-200"
-              : "bg-red-950/60 border border-red-700 text-red-200"
+              ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
+              : "bg-rose-50 border border-rose-200 text-rose-800"
           }`}
         >
           {status.pesan}
@@ -33,8 +44,8 @@ export default function FormUlasan({ komponenId }: { komponenId: number }) {
       )}
 
       <div>
-        <label htmlFor="nama-ulasan" className="block text-xs font-medium text-neutral-300 uppercase tracking-wider">
-          Nama Anda
+        <label htmlFor="nama-ulasan" className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">
+          Your Name / Handle
         </label>
         <input
           id="nama-ulasan"
@@ -43,47 +54,46 @@ export default function FormUlasan({ komponenId }: { komponenId: number }) {
           required
           minLength={2}
           maxLength={60}
-          placeholder="Contoh: Rian Pratama"
+          placeholder="e.g. Stephen R. or Marcus Vance"
           className={inputClass}
           aria-invalid={!!g?.nama}
           aria-describedby="galat-ulasan-nama"
         />
         {g?.nama && (
-          <p id="galat-ulasan-nama" className="mt-1 text-xs text-red-400">
+          <p id="galat-ulasan-nama" className="mt-1 text-xs text-rose-600">
             {g.nama[0]}
           </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="nilai-ulasan" className="block text-xs font-medium text-neutral-300 uppercase tracking-wider">
-          Rating / Penilaian (1 - 5 Bintang)
+        <label htmlFor="nilai-ulasan" className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">
+          Rating (1 to 5 Stars)
         </label>
         <select
           id="nilai-ulasan"
           name="nilai"
-          defaultValue="5"
-          required
-          className={inputClass}
+          defaultValue={5}
+          className={`${inputClass} cursor-pointer`}
           aria-invalid={!!g?.nilai}
           aria-describedby="galat-ulasan-nilai"
         >
-          <option value="5">⭐⭐⭐⭐⭐ (5 - Sangat Direkomendasikan)</option>
-          <option value="4">⭐⭐⭐⭐ (4 - Performa Bagus)</option>
-          <option value="3">⭐⭐⭐ (3 - Standar / Cukup)</option>
-          <option value="2">⭐⭐ (2 - Kurang Memuaskan)</option>
-          <option value="1">⭐ (1 - Bermasalah / Kecewa)</option>
+          <option value={5}>★★★★★ - 5 Stars (Exceptional)</option>
+          <option value={4}>★★★★☆ - 4 Stars (High Performance)</option>
+          <option value={3}>★★★☆☆ - 3 Stars (Satisfactory)</option>
+          <option value={2}>★★☆☆☆ - 2 Stars (Below Expectations)</option>
+          <option value={1}>★☆☆☆☆ - 1 Star (Not Recommended)</option>
         </select>
         {g?.nilai && (
-          <p id="galat-ulasan-nilai" className="mt-1 text-xs text-red-400">
+          <p id="galat-ulasan-nilai" className="mt-1 text-xs text-rose-600">
             {g.nilai[0]}
           </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="komentar-ulasan" className="block text-xs font-medium text-neutral-300 uppercase tracking-wider">
-          Komentar Ulasan Teknis
+        <label htmlFor="komentar-ulasan" className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">
+          Technical Review & Impressions
         </label>
         <textarea
           id="komentar-ulasan"
@@ -92,25 +102,32 @@ export default function FormUlasan({ komponenId }: { komponenId: number }) {
           required
           minLength={5}
           maxLength={500}
-          placeholder="Bagikan pengalaman perakitan, suhu, kecocokan, atau performanya..."
+          value={isi}
+          onChange={(e) => setIsi(e.target.value)}
+          placeholder="Describe build quality, clock speeds, coil whine, or cooler compatibility..."
           className={inputClass}
           aria-invalid={!!g?.komentar}
           aria-describedby="galat-ulasan-komentar"
         />
+        <p className="text-[11px] text-slate-500 mt-1 font-medium">
+          {sisa} karakter tersisa
+        </p>
         {g?.komentar && (
-          <p id="galat-ulasan-komentar" className="mt-1 text-xs text-red-400">
+          <p id="galat-ulasan-komentar" className="mt-1 text-xs text-rose-600">
             {g.komentar[0]}
           </p>
         )}
       </div>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="button button-primary text-sm w-full sm:w-auto"
-      >
-        {pending ? "Mengirim Ulasan..." : "Kirim Ulasan"}
-      </button>
+      <div className="pt-2">
+        <button
+          type="submit"
+          disabled={pending}
+          className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold text-xs shadow-sm hover:shadow-md transition-all duration-150 disabled:opacity-50"
+        >
+          {pending ? "Publishing Review..." : "Submit Review"}
+        </button>
+      </div>
     </form>
   );
 }

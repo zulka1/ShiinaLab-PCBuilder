@@ -3,5 +3,5 @@ export default function LayoutShop({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="shop-layout-wrapper">{children}</div>;
+  return <div className="shop-layout-wrapper" suppressHydrationWarning>{children}</div>;
 }

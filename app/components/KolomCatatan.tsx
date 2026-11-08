@@ -7,16 +7,16 @@ export default function KolomCatatan({ label }: { label: string }) {
   const [catatan, setCatatan] = useState("");
 
   return (
-    <div className="rounded-xl border border-dashed border-amber-400/40 bg-neutral-900/60 p-3 text-sm my-2">
-      <label htmlFor={id} className="font-medium text-amber-300 block mb-1">
+    <div className="rounded-2xl border border-slate-200 bg-white p-3 text-xs shadow-2xs my-2">
+      <label htmlFor={id} className="font-bold text-slate-700 block mb-1">
         {label}
       </label>
       <input
         id={id}
         value={catatan}
         onChange={(e) => setCatatan(e.target.value)}
-        placeholder="Ketik teks uji coba di sini..."
-        className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-1.5 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400 text-sm"
+        placeholder="Ketik catatan sesi di sini..."
+        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
       />
     </div>
   );
