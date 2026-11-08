@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { SiteFooter, SiteHeader } from "../components/SiteNavigation";
 import { BuilderWorkspace } from "../components/BuilderWorkspace";
 import { ambilDaftarKomponen } from "@/lib/data";
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 export const instant = false;
 
 export default async function BuilderPage() {
+  await connection();
   let products: Product[] = mockProducts;
 
   try {

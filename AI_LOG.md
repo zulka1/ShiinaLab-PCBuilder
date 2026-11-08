@@ -27,3 +27,26 @@
 - Bagian yang dibuat/diperbarui: `security/asset-inventory.md`, `security/dfd.md`, `security/threat-model.md`, dan `security/risk-register.md`.
 - Batasan yang dicatat: checkout, pembayaran, stok, panel admin, dan penyimpanan rakitan ke akun belum berjalan; ancaman ditulis sebagai skenario risiko, bukan klaim bahwa serangan telah terjadi.
 - Verifikasi: peninjauan isi dokumen terhadap route API, implementasi sesi/database, builder, dan data katalog yang ada. Perubahan dokumentasi saja; belum menjalankan tes aplikasi.
+
+## 2026-11-08 — Tugas 2 Kriptografi & PAW (tag `v0.2`)
+
+- Tool: Antigravity (Google DeepMind)
+- Tujuan: 
+  1. Mengimplementasikan enkripsi terautentikasi (AEAD AES-256-GCM) untuk perlindungan kerahasiaan dan integritas data rakitan PC sensitif serta data konfigurasi pengguna.
+  2. Menyusun dokumen arsitektur kriptografi `KEPUTUSAN.md` yang memetakan kebutuhan, mekanisme (Argon2id, AES-256-GCM, HMAC-SHA256, CSPRNG, HKDF), dan justifikasi teknis fail-closed.
+  3. Membangun rangkaian pengujian otomatis AEAD (positive encryption/decryption, tampered ciphertext, tampered auth tag, wrong key, AAD mismatch, dan pencegahan nonce reuse).
+  4. Melengkapi pengujian 10 skenario CRUD & Relasional PostgreSQL-Prisma pada PAW serta pembuktian validasi server Zod.
+- Ringkasan prompt:
+  1. Menganalisis rubrik Tugas 2 Kriptografi dan Tugas 2 PAW dari berkas panduan e-learning.
+  2. Merancang modul kriptografi mandiri `lib/crypto.ts` berbasis Node.js standard library `node:crypto` tanpa dependensi eksternal yang rentan.
+  3. Menyiapkan skrip uji otomatis `scripts/test-crypto.ts` dengan penanganan gagal tertutup (fail-closed) dan pesan galat spesifik.
+  4. Mendokumentasikan 10 skenario uji PAW dan memperbarui `README.md` untuk rilis tag `v0.2`.
+- Bagian yang digunakan:
+  - Primitif kriptografi resmi Node.js: `crypto.createCipheriv`, `crypto.createDecipheriv`, `crypto.randomBytes`, dan `crypto.hkdfSync`.
+  - Skema relasi Prisma `Komponen` dan `Ulasan` beserta Zod validation di `lib/validasi.ts`.
+- Bagian yang diubah/dibuat:
+  - `lib/crypto.ts`: fungsi `enkripsiAEAD`, `dekripsiAEAD`, dan derivasi kunci `turunkanKunciHKDF`.
+  - `KEPUTUSAN.md`: dokumentasi lengkap pemetaan kriptografi, parameter (panjang kunci 256-bit, IV 96-bit, tag 128-bit, AAD context), dan analisis risiko bila nonce berulang.
+  - `scripts/test-crypto.ts`: 5 skenario uji otomatis dengan pelaporan warna terminal yang dapat diulang kapan saja.
+  - `docs/Pemrograman-aplikasi-dan-web/Tugas2/pengujian-paw-v0.2.md` & `README.md`: dokumentasi skenario pengujian CRUD PAW dan bukti penolakan validasi server.
+- Verifikasi: Menjalankan eksekusi uji otomatis AEAD (`npx tsx scripts/test-crypto.ts`), verifikasi `npx tsc --noEmit` bersih tanpa galat, dan uji alur validasi server Zod.
