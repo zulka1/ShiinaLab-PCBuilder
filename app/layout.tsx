@@ -25,6 +25,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var o=Element.prototype.setAttribute;Element.prototype.setAttribute=function(n,v){if(typeof n==='string'&&(n.indexOf('bis_')===0||n.indexOf('__processed_')===0)){return}return o.apply(this,arguments)}}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body suppressHydrationWarning className="min-h-full flex flex-col">
         <a className="skip-link" href="#main-content">Lewati ke konten utama</a>
         {children}

@@ -178,29 +178,12 @@ export default async function ProductDetailPage({
               >
                 <span className="text-white font-extrabold">+ Add to PC Builder</span>
               </Link>
-              <div className="flex items-center gap-2 pt-1">
-                <Link
-                  href={`/shop/${item.id}/edit`}
-                  className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition"
-                >
-                  ✏️ Edit Komponen
-                </Link>
-                <form
-                  action={async () => {
-                    "use server";
-                    const { hapusKomponen } = await import("@/app/shop/actions");
-                    await hapusKomponen(item.id);
-                  }}
-                  className="flex-1"
-                >
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs transition border border-rose-200"
-                  >
-                    🗑️ Hapus Komponen
-                  </button>
-                </form>
-              </div>
+              <button
+                type="button"
+                className="w-full py-3.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 font-bold text-sm shadow-2xs hover:border-slate-300 transition"
+              >
+                Save to Wishlist
+              </button>
             </div>
           </div>
         </section>
