@@ -146,7 +146,12 @@ export async function hapusKomponenAdmin(
       return { error: "Akses ditolak: Hanya Super Admin yang dapat menghapus komponen." };
     }
 
-    await prisma.komponen.delete({ where: { id } });
+    // MODUL 7 PERBAIKAN: Transaksi atomik agar ulasan terkait ikut terhapus bersama komponen
+    await prisma.$transaction([
+      prisma.ulasan.deleteMany({ where: { komponenId: id } }),
+      prisma.komponen.delete({ where: { id } }),
+    ]);
+
     revalidatePath("/shop");
     revalidatePath("/admin");
     return { success: true };

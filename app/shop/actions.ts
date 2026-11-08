@@ -115,11 +115,15 @@ export async function ubahKomponen(
 }
 
 export async function hapusKomponen(id: number) {
-  try {
-    await prisma.komponen.delete({ where: { id } });
-    revalidatePath("/shop");
-    redirect("/shop");
-  } catch (e) {
-    console.log("Gagal menghapus");
-  }
+  // MODUL 7 PERBAIKAN:
+  // Transaksi atomik: ulasan ikut terhapus bersama komponennya
+  await prisma.$transaction([
+    prisma.ulasan.deleteMany({ where: { komponenId: id } }),
+    prisma.komponen.delete({ where: { id } }),
+  ]);
+
+  // redirect() dipindah ke luar try/catch karena melempar galat internal NEXT_REDIRECT
+  revalidatePath("/shop");
+  revalidatePath("/admin");
+  redirect("/shop");
 }
