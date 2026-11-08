@@ -73,13 +73,7 @@ export async function editKomponenAdmin(
   }
 
   const mentah = Object.fromEntries(formData);
-  const tersediaRaw = formData.get("tersedia");
-  const tersedia = tersediaRaw === "on" || tersediaRaw === "true";
-
-  const hasil = skemaKomponen.safeParse({
-    ...mentah,
-    tersedia,
-  });
+  const hasil = skemaKomponen.safeParse(mentah);
 
   if (!hasil.success) {
     const flat = z.flattenError(hasil.error).fieldErrors;
@@ -152,15 +146,12 @@ export async function hapusKomponenAdmin(
       return { error: "Akses ditolak: Hanya Super Admin yang dapat menghapus komponen." };
     }
 
-    await prisma.$transaction([
-      prisma.ulasan.deleteMany({ where: { komponenId: id } }),
-      prisma.komponen.delete({ where: { id } }),
-    ]);
-
+    await prisma.komponen.delete({ where: { id } });
     revalidatePath("/shop");
     revalidatePath("/admin");
     return { success: true };
-  } catch {
+  } catch (e) {
+    console.error("Gagal menghapus:", e);
     return { error: "Gagal menghapus komponen dari basis data." };
   }
 }

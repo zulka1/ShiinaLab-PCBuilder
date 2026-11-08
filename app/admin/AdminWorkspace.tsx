@@ -537,17 +537,19 @@ export function AdminWorkspace({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  name="tersedia"
-                  type="checkbox"
-                  id="modal-edit-tersedia"
-                  defaultChecked={editingComponent.tersedia}
-                  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
-                />
-                <label htmlFor="modal-edit-tersedia" className="text-xs font-bold text-slate-700">
-                  Ready in Inventory (In Stock)
+              <div className="pt-1">
+                <label htmlFor="modal-edit-tersedia" className="block text-xs font-bold text-slate-700 mb-1">
+                  Ketersediaan (Inventory Status)
                 </label>
+                <select
+                  name="tersedia"
+                  id="modal-edit-tersedia"
+                  defaultValue={String(editingComponent.tersedia)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-medium"
+                >
+                  <option value="true">Tersedia (In Stock)</option>
+                  <option value="false">Tidak tersedia (Out of Stock)</option>
+                </select>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">

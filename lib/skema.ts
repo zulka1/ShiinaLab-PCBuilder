@@ -52,7 +52,8 @@ export const skemaKomponen = z.object({
     .trim()
     .min(10, "Deskripsi minimal 10 karakter")
     .max(300, "Deskripsi maksimal 300 karakter"),
-  tersedia: z.coerce.boolean(),
+  // MODUL 7 PERBAIKAN: z.stringbool() memetakan "true" -> true, "false" -> false
+  tersedia: z.union([z.boolean(), z.stringbool()]).default(true),
   gambar: z.string().optional().nullable(),
 });
 
