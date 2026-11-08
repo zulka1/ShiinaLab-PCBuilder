@@ -1,0 +1,160 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:7e968cc9-5519-46aa-9872-efde7e34b22d",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-11-08T15:36:30.670923+00:00",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "author": "CycloneDX",
+          "name": "cdxgen",
+          "version": "10.9.0"
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "bom-ref": "pkg:npm/shiinalab-pcbuilder@0.2.0",
+      "name": "shiinalab-pcbuilder",
+      "version": "0.2.0",
+      "description": "ShiinaLab \u2014 PC Builder & Parts Store (Hardened Milestone 2)",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "framework",
+      "bom-ref": "pkg:npm/next@16.4.0",
+      "name": "next",
+      "version": "16.4.0",
+      "purl": "pkg:npm/next@16.4.0",
+      "description": "The React Framework for the Web",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/react@19.3.0",
+      "name": "react",
+      "version": "19.3.0",
+      "purl": "pkg:npm/react@19.3.0",
+      "description": "React is a JavaScript library for building user interfaces",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/react-dom@19.3.0",
+      "name": "react-dom",
+      "version": "19.3.0",
+      "purl": "pkg:npm/react-dom@19.3.0",
+      "description": "React package for working with the DOM",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/@prisma/client@7.10.1",
+      "name": "@prisma/client",
+      "version": "7.10.1",
+      "purl": "pkg:npm/%40prisma/client@7.10.1",
+      "description": "Prisma Client is an auto-generated, type-safe and modern JavaScript/TypeScript ORM",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/@prisma/adapter-pg@7.10.1",
+      "name": "@prisma/adapter-pg",
+      "version": "7.10.1",
+      "purl": "pkg:npm/%40prisma/adapter-pg@7.10.1",
+      "description": "Prisma driver adapter for PostgreSQL",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/pg@8.23.1",
+      "name": "pg",
+      "version": "8.23.1",
+      "purl": "pkg:npm/pg@8.23.1",
+      "description": "PostgreSQL client for Node.js",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/argon2@0.45.1",
+      "name": "argon2",
+      "version": "0.45.1",
+      "purl": "pkg:npm/argon2@0.45.1",
+      "description": "An Argon2 library for Node.js (RFC 9106 password hashing)",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/zod@4.6.7",
+      "name": "zod",
+      "version": "4.6.7",
+      "purl": "pkg:npm/zod@4.6.7",
+      "description": "TypeScript-first schema declaration and validation library",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/better-sqlite3@13.0.3",
+      "name": "better-sqlite3",
+      "version": "13.0.3",
+      "purl": "pkg:npm/better-sqlite3@13.0.3",
+      "description": "Fast SQLite client for Node.js",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/dotenv@18.0.9",
+      "name": "dotenv",
+      "version": "18.0.9",
+      "purl": "pkg:npm/dotenv@18.0.9",
+      "description": "Loads environment variables from .env file",
+      "scope": "required"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/tailwindcss@4.0.0",
+      "name": "tailwindcss",
+      "version": "4.0.0",
+      "purl": "pkg:npm/tailwindcss@4.0.0",
+      "description": "A utility-first CSS framework for rapid UI development",
+      "scope": "excluded"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/typescript@5.0.0",
+      "name": "typescript",
+      "version": "5.0.0",
+      "purl": "pkg:npm/typescript@5.0.0",
+      "description": "TypeScript language compiler",
+      "scope": "excluded"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:npm/shiinalab-pcbuilder@0.2.0",
+      "dependsOn": [
+        "pkg:npm/next@16.4.0",
+        "pkg:npm/react@19.3.0",
+        "pkg:npm/react-dom@19.3.0",
+        "pkg:npm/@prisma/client@7.10.1",
+        "pkg:npm/@prisma/adapter-pg@7.10.1",
+        "pkg:npm/pg@8.23.1",
+        "pkg:npm/argon2@0.45.1",
+        "pkg:npm/zod@4.6.7",
+        "pkg:npm/better-sqlite3@13.0.3",
+        "pkg:npm/dotenv@18.0.9"
+      ]
+    }
+  ]
+}

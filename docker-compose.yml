@@ -1,0 +1,60 @@
+services:
+  # Layanan Aplikasi Web ShiinaLab
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: shiinalab-web:sec-0.2
+    container_name: shiinalab-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://shiina_user:ShiinaSecurePass2026!@postgres:5432/shiinalab_db?schema=public
+    ports:
+      - "127.0.0.1:3000:3000" # Hanya bind ke localhost (tidak dipublikasikan ke 0.0.0.0)
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal_network
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+
+  # Layanan Database PostgreSQL (Terisolasi dari Publik)
+  postgres:
+    image: postgres:16-alpine
+    container_name: shiinalab-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: shiina_user
+      POSTGRES_PASSWORD: ShiinaSecurePass2026!
+      POSTGRES_DB: shiinalab_db
+    # Port 5432 TIDAK DIPUBLIKASIKAN ke host (hanya bisa diakses via internal_network)
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal_network
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shiina_user -d shiinalab_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  internal_network:
+    driver: bridge
+    internal: false
+
+volumes:
+  postgres_data:
+    driver: local

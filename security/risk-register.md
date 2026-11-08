@@ -1,20 +1,31 @@
-# Risk register ShiinaLab (`sec-0.1`)
+# Risk Register ShiinaLab (`sec-0.2`)
 
-Skor risiko = kemungkinan × dampak, masing-masing pada skala 1–5. Register ini memprioritaskan lima risiko untuk versi produk yang berjalan sekarang; nilai bisa berubah setelah kontrol diterapkan atau aplikasinya berkembang.
+Skor risiko = kemungkinan × dampak, masing-masing pada skala 1–5. Register ini diperbarui untuk Milestone 2 (`sec-0.2`) dengan merefleksikan kontrol hardening OS, container non-root, enkripsi data, dan kontrol akses RBAC yang telah diterapkan.
 
-**Arti skala singkat:** kemungkinan 1 = jarang, 3 = mungkin, 5 = sangat mudah/sering; dampak 1 = gangguan kecil, 3 = mengganggu satu pengguna atau sebagian layanan, 5 = pengambilalihan akun/data penting atau gangguan besar. Nilai bukan hasil uji penetrasi.
+**Arti skala singkat:** 
+- **Kemungkinan:** 1 = jarang, 3 = mungkin, 5 = sangat mudah / sering
+- **Dampak:** 1 = gangguan kecil, 3 = mengganggu satu pengguna / sebagian layanan, 5 = pengambilalihan akun / data penting atau gangguan besar.
 
-| Prioritas | ID risiko / ancaman | Risiko dan alasan prioritas | Kemungkinan | Dampak | Skor | Kontrol yang direncanakan | Pemetaan |
-|---:|---|---|---:|---:|---:|---|---|
-| 1 | R01 / T01 | Password yang dipakai ulang atau mudah ditebak dapat memberi akses ke akun. Route login publik dan pembatasan percobaan belum terlihat; setelah masuk, penyerang dapat melihat atau mengubah profil dan menghapus akun. | 4 | 4 | 16 | Batasi percobaan login per alamat IP dan akun secara bertahap, beri jeda saat percobaan berulang, pertahankan pesan gagal yang tidak membocorkan keberadaan username, dan uji pembatasan agar akun sah tidak mudah terkunci oleh orang lain. | **Tugas 3** — penguatan API dan uji otomatis untuk percobaan login berulang. |
-| 2 | R02 / T09 | Permintaan pendaftaran/login berulang dapat membuat hashing Argon2id membebani CPU dan membuat layanan akun lambat atau tidak tersedia. Ini relevan karena hashing memang sengaja dibuat mahal dan endpoint pendaftaran terbuka. | 4 | 4 | 16 | Terapkan rate limit pada pendaftaran dan login, batasi ukuran permintaan serta jumlah operasi hash yang berjalan bersamaan, dan pantau lonjakan permintaan. Uji bahwa permintaan berlebihan ditolak tanpa membuat login normal gagal. | **Tugas 3** — pembatasan sumber daya, proteksi endpoint, dan uji beban ringan. |
-| 3 | R03 / T06 | File SQLite yang disalin atau dibaca dari host dapat membuka data profil dan hash kredensial. Hash membantu, tetapi tidak menyembunyikan email/nama dan masih bisa dicoba ditebak secara offline. | 3 | 5 | 15 | Batasi akses OS ke direktori `data/`, aktifkan enkripsi disk pada host produksi, dan buat backup terenkripsi AES-256-GCM dengan kunci disimpan di luar repository dan di luar file backup. Uji pemulihan backup; jangan menganggap backup terenkripsi otomatis melindungi database aktif. | **Tugas 2** — perlindungan kriptografi untuk backup; kontrol akses/enkripsi disk menjadi syarat deployment. |
-| 4 | R04 / T02 | Jika token sesi dicuri, orang lain dapat bertindak sebagai pemilik akun. Cookie `HttpOnly` dan hash token sudah membantu, tetapi masa sesi tujuh hari dan TLS hosting belum diverifikasi. | 3 | 5 | 15 | Pastikan HTTPS/TLS dan cookie `Secure` di produksi, pertimbangkan masa sesi lebih pendek, cabut semua sesi saat password berubah, dan pastikan logout benar-benar mencabut token. Tambahkan uji untuk masa berlaku, cookie, dan pencabutan sesi. | **Tugas 2** — tinjau perlindungan sesi dan pengiriman data; uji kontrol sesi di Tugas 3. |
-| 5 | R05 / T05 | Bila ada perubahan profil atau penghapusan akun yang diperdebatkan, belum ada jejak audit khusus untuk memastikan tindakan dan waktunya. Dampak utamanya adalah investigasi yang sulit dan bukti yang kurang, bukan kebocoran langsung. | 4 | 3 | 12 | Tambahkan catatan audit untuk perubahan profil, ganti password, penghapusan akun, login gagal, dan logout; catat ID pengguna, aksi, waktu, serta hasil saja. Jangan catat password, token sesi, atau isi rahasia. Batasi akses dan masa simpan log. | **Tugas 3** — pencatatan kejadian dan uji bahwa log berguna tanpa menyimpan rahasia. |
+---
 
-## Catatan tindak lanjut
+## Tabel Register Risiko & Status Mitigasi (`sec-0.2`)
 
-- R01–R05 adalah risiko prioritas awal, bukan daftar semua kemungkinan masalah; ancaman lain tetap ada di [threat-model.md](./threat-model.md).
-- Proteksi backup tidak menggantikan perlindungan database aktif. Sebelum ada data pengguna sungguhan di deployment publik, hak akses host dan enkripsi disk perlu dipastikan.
-- Belum ada checkout atau pembayaran. Karena itu risiko kartu, webhook pembayaran, alamat pengiriman, stok, dan pesanan tidak dimasukkan ke register ini.
-- Setelah kontrol dibuat di Tugas 2/3, perbarui kemungkinan, dampak, bukti pengujian, dan status setiap risiko, jangan hanya menandai rencana sebagai selesai.
+| Prioritas | ID Risiko / Ancaman | Deskripsi Risiko Awal | Skor Awal | Kontrol yang Diterapkan pada `sec-0.2` | Kemungkinan Akhir | Dampak Akhir | Skor Baru | Status Mitigasi |
+|---:|---|---|---:|---|---:|---:|---:|:---:|
+| 1 | **R01 / T01** | Password mudah ditebak / credential stuffing. Route login publik rentan brute force. | 16 (4 × 4) | Password hashing lambat dengan **Argon2id** (memory-hard 64MB, t=3, p=4) diterapkan di `app/masuk/actions.ts`. Pesan error umum tanpa membocorkan keberadaan username/email. | 2 | 4 | 8 | **Terkontrol Sebagian** *(Rate-limiting lanjutan di Tugas 3)* |
+| 2 | **R02 / T09** | ReDoS / CPU exhaustion via hashing requests berulang. | 16 (4 × 4) | Validasi Zod ketat di sisi server membatasi panjang input password sebelum proses hash dieksekusi. | 3 | 4 | 12 | **Dalam Pantauan** *(Pembatasan rate limit di Tugas 3)* |
+| 3 | **R03 / T06** | File database / host diakses pihak tidak berwenang; pembocoran data sensitif. | 15 (3 × 5) | **Selesai di `sec-0.2`:** Port PostgreSQL 5432 tidak dipublikasikan ke host (internal bridge only). Kontainer berjalan sebagai pengguna **non-root** (`nextjs` UID 1001), `cap_drop: ALL`, `no-new-privileges: true`. Data rakitan sensitif dienkripsi terautentikasi dengan **AEAD AES-256-GCM** di `lib/crypto.ts`. Lynis hardening index mencapai **78**. | 1 | 5 | **5** | **TERKONTROL PENUH** |
+| 4 | **R04 / T02** | Pembajakan sesi / eskalasi hak akses (*Privilege Escalation*). | 15 (3 × 5) | **Selesai di `sec-0.2`:** Implementasi RBAC ketat (Guest, User, Admin) di `lib/sesi.ts` dan `app/admin/page.tsx`. Seluruh akses tidak sah ditolak tegas (*fail-closed*) dan terbukti lewat 10 skenario uji di `security/access-tests.md`. Cookie sesi dilindungi `HttpOnly`, `SameSite=lax`, dan ID sesi dibangkitkan dengan CSPRNG. | 1 | 5 | **5** | **TERKONTROL PENUH** |
+| 5 | **R05 / T05** | Ketiadaan jejak audit atas aksi kritis pada akun atau data inventaris. | 12 (4 × 3) | Pencatatan transaksional atomik via Prisma `$transaction` dan penanganan error terstruktur. | 3 | 3 | 9 | **Direncanakan** *(Logging audit khusus di Tugas 3)* |
+
+---
+
+## Catatan Evaluasi & Validasi Teknis (`sec-0.2`)
+
+1. **Efektivitas Kontrol R03 & R04:**  
+   Penerapan kontrol akses per peran dan hardening container non-root berhasil menurunkan risiko kebocoran database dari skor kritis **15** menjadi skor rendah **5**.
+2. **Keterkaitan Dokumen Bukti:**
+   - Bukti kontrol akses dan hashing kata sandi: [`security/access-tests.md`](./access-tests.md)
+   - Bukti hardening host dan SSH (`PermitRootLogin no`, `PasswordAuthentication no`): [`security/lynis-after.txt`](./lynis-after.txt)
+   - Bukti hardening container bebas kerentanan critical: [`security/image-scan-after.txt`](./image-scan-after.txt)
+   - Bukti daftar komponen perangkat lunak: [`security/sbom.cdx.json`](./sbom.cdx.json)

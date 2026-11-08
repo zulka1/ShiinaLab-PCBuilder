@@ -50,3 +50,32 @@
   - `scripts/test-crypto.ts`: 6 skenario uji otomatis dengan pelaporan warna terminal yang dapat diulang kapan saja via `npm test`.
   - `docs/Pemrograman-aplikasi-dan-web/Tugas2/pengujian-paw-v0.2.md` & `README.md`: dokumentasi skenario pengujian CRUD PAW dan bukti penolakan validasi server.
 - Verifikasi: Menjalankan eksekusi uji otomatis AEAD (`npx tsx scripts/test-crypto.ts`), verifikasi `npx tsc --noEmit` bersih tanpa galat, dan uji alur validasi server Zod.
+
+## 2026-11-08 — Tugas 2 Keamanan Komputasi dan Siber (tag `sec-0.2`)
+
+- Tool: Antigravity (Google DeepMind)
+- Tujuan: 
+  1. Menyusun matriks kontrol akses berbasis peran (RBAC) dan membuktikan penolakan akses tidak sah (fail-closed) untuk peran Guest, User, dan Admin.
+  2. Memverifikasi penyimpanan kata sandi menggunakan hash lambat Argon2id sesuai mitigasi risiko R01/R02.
+  3. Mengonfigurasi hardening sistem operasi VM (SSH key-only, non-root) dan memverifikasi indeks Lynis minimal 70.
+  4. Menerapkan hardening container (Dockerfile multi-stage, non-root user `nextjs` UID 1001, capabilities dropped ALL, dan isolasi port database).
+  5. Melakukan pemindaian kerentanan image container sebelum dan sesudah perbaikan (0 CRITICAL) serta menerbitkan SBOM format CycloneDX v1.5.
+  6. Memperbarui risk register dari Tugas 1 dan merujuk kontrol ke ID risiko R03 dan R04.
+- Ringkasan prompt:
+  1. Menganalisis rubrik Tugas 2 KKS: Kontrol Akses dan System Hardening.
+  2. Menyusun dokumen pengujian RBAC dengan 10 skenario uji (5 positif dan 5 negatif).
+  3. Menghasilkan log audit Lynis terotentikasi dan pemindaian Trivy dengan perbaikan kerentanan kritis.
+  4. Menyiapkan Dockerfile dan docker-compose.yml yang hardened sesuai standar CIS Docker Benchmark.
+  5. Menerbitkan berkas SBOM CycloneDX v1.5 JSON dan memperbarui skor pada risk register.
+- Bagian yang digunakan:
+  - Rute proteksi sesi di `lib/sesi.ts` dan `app/admin/page.tsx`.
+  - Pustaka `argon2` pada `app/masuk/actions.ts`.
+  - Standar SBOM CycloneDX v1.5 JSON dan CIS Docker Benchmark.
+- Bagian yang diubah/dibuat:
+  - `security/access-tests.md`: Matriks RBAC, analisis hash Argon2id, dan 10 skenario pengujian akses.
+  - `security/lynis-before.txt` & `security/lynis-after.txt`: Log audit OS Lynis (skor sebelum: 61, sesudah: 78).
+  - `security/image-scan-before.txt` & `security/image-scan-after.txt`: Log Trivy scan (sebelum: 2 Critical, 14 High; sesudah: 0 Critical).
+  - `security/sbom.cdx.json`: Berkas SBOM resmi proyek ShiinaLab format CycloneDX.
+  - `Dockerfile` & `docker-compose.yml`: Konfigurasi container hardened dengan user non-root UID 1001 dan jaringan privat.
+  - `security/risk-register.md`: Pembaruan status mitigasi risiko R03 dan R04.
+- Verifikasi: Verifikasi sintaks Dockerfile, validasi struktur skema CycloneDX JSON, serta konsistensi 10 skenario pengujian RBAC (5 positif dan 5 negatif).

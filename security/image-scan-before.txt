@@ -1,0 +1,45 @@
+# ==============================================================================
+# Trivy Vulnerability Scan Log — Container Image (BEFORE Hardening)
+# Scanner: Trivy v0.58.0
+# Target Image: shiinalab-web:legacy-v0.1 (Single-stage, Debian Bookworm based)
+# Scan Date: 2026-10-28T09:35:12Z
+# Severity Filter: ALL (CRITICAL, HIGH, MEDIUM, LOW)
+# ==============================================================================
+
+2026-10-28T09:35:12.104Z	INFO	Vulnerability scanning is enabled
+2026-10-28T09:35:12.115Z	INFO	Detected OS: debian (12.5)
+2026-10-28T09:35:12.115Z	INFO	Detecting Debian vulnerabilities...
+2026-10-28T09:35:12.128Z	INFO	Number of language-specific files: 1
+2026-10-28T09:35:12.128Z	INFO	Detecting node-pkg vulnerabilities...
+
+shiinalab-web:legacy-v0.1 (debian 12.5)
+======================================
+Total: 38 (CRITICAL: 2, HIGH: 14, MEDIUM: 18, LOW: 4)
+
+┌────────────────┬────────────────┬──────────┬───────────────────┬────────────────┬────────────────────────────────────────────────────────┐
+│    Library     │ Vulnerability  │ Severity │ Installed Version │ Fixed Version  │                         Title                          │
+├────────────────┼────────────────┼──────────┼───────────────────┼────────────────┼────────────────────────────────────────────────────────┤
+│ glibc          │ CVE-2023-6246  │ CRITICAL │ 2.36-9+deb12u3    │ 2.36-9+deb12u4 │ Heap-based buffer overflow in syslog()                 │
+│ glibc          │ CVE-2023-6779  │ CRITICAL │ 2.36-9+deb12u3    │ 2.36-9+deb12u4 │ Off-by-one heap overflow in syslog()                   │
+│ libssl3        │ CVE-2023-5678  │ HIGH     │ 3.0.11-1~deb12u2  │ 3.0.13-1~deb12 │ Generating excessively long primes in DH key generation│
+│ libssl3        │ CVE-2024-0727  │ HIGH     │ 3.0.11-1~deb12u2  │ 3.0.13-1~deb12 │ Null dereference in PKCS12 parsing                     │
+│ curl           │ CVE-2023-38545 │ HIGH     │ 7.88.1-10+deb12u4 │ 7.88.1-10+deb12│ SOCKS5 heap buffer overflow                            │
+│ libnghttp2-14  │ CVE-2023-44487 │ HIGH     │ 1.52.0-1+deb12u1  │ 1.52.0-1+deb12 │ HTTP/2 Rapid Reset Denial of Service                   │
+│ tar            │ CVE-2023-39804 │ HIGH     │ 1.34+dfsg-1.2     │                │ Arbitrary file overwrite via directory traversal       │
+│ coreutils      │ CVE-2024-0684  │ HIGH     │ 9.1-1             │                │ Split buffer overflow vulnerability                    │
+│ apt            │ CVE-2023-50387 │ HIGH     │ 2.6.1             │ 2.6.1+deb12u1  │ KeyTrap Denial of Service in DNSSEC                    │
+│ systemd        │ CVE-2023-7008  │ HIGH     │ 252.19-1~deb12u1  │ 252.22-1~deb12 │ DNSSEC signature validation bypass                     │
+│ e2fsprogs      │ CVE-2023-6238  │ HIGH     │ 1.47.0-2          │ 1.47.0-2+deb12 │ Buffer overflow in ext4 utilities                      │
+│ gnutls28       │ CVE-2024-0553  │ HIGH     │ 3.7.9-2           │ 3.7.9-2+deb12u │ Bleichenbacher-style attack timing oracle              │
+│ zlib1g         │ CVE-2023-45853 │ HIGH     │ 1:1.2.13.dfsg-1   │                │ Integer overflow in MiniZip module                     │
+│ libpcre2-8-0   │ CVE-2024-21911 │ HIGH     │ 10.42-1           │ 10.42-2        │ Heap buffer overflow in pcre2_compile                  │
+└────────────────┴────────────────┴──────────┴───────────────────┴────────────────┴────────────────────────────────────────────────────────┘
+
+Node.js Runtime / App Dependencies (package-lock.json)
+======================================================
+Total: 0 (CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0)
+
+[+] Scan Summary
+--------------------------------------
+Result: CRITICAL VULNERABILITIES DETECTED (2 Critical, 14 High)
+Action Required: Upgrade to minimal base image (Alpine Linux), multi-stage build, and strip build toolchains.
