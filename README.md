@@ -66,6 +66,8 @@ shiinalab-pcbuilder/
 ├── docs/
 │   ├── Kriptografi/             # Dokumentasi tugas mata kuliah Kriptografi
 │   │   ├── Tugas1/              # Tugas 1 Kriptografi (tag v0.1)
+│   │   ├── Tugas2/              # Tugas 2 Kriptografi (AEAD AES-256-GCM & Integritas Data v0.2)
+│   │   │   └── KEPUTUSAN.md
 │   │   └── latihan4/            # Eksplorasi enkripsi simetris rakitan
 │   ├── Pemrograman-aplikasi-dan-web/ # Dokumentasi tugas mata kuliah PAW
 │   │   ├── Tugas1/              # Tugas 1 PAW (Lighthouse & konsep v0.1)
@@ -86,6 +88,7 @@ shiinalab-pcbuilder/
 ├── public/                      # Aset statis & gambar komponen 3D resolusi tinggi
 ├── security/                    # Audit keamanan KKS (asset-inventory, dfd, threat-model, risk)
 ├── AI_LOG.md                    # Catatan transparansi penggunaan AI generatif
+├── KEPUTUSAN.md                 # Arsitektur kriptografi (AEAD AES-256-GCM, HKDF, Argon2id)
 └── README.md                    # Dokumentasi utama proyek
 ```
 

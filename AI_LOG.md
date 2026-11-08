@@ -45,8 +45,8 @@
   - Primitif kriptografi resmi Node.js: `crypto.createCipheriv`, `crypto.createDecipheriv`, `crypto.randomBytes`, dan `crypto.hkdfSync`.
   - Skema relasi Prisma `Komponen` dan `Ulasan` beserta Zod validation di `lib/validasi.ts`.
 - Bagian yang diubah/dibuat:
-  - `lib/crypto.ts`: fungsi `enkripsiAEAD`, `dekripsiAEAD`, dan derivasi kunci `turunkanKunciHKDF`.
-  - `KEPUTUSAN.md`: dokumentasi lengkap pemetaan kriptografi, parameter (panjang kunci 256-bit, IV 96-bit, tag 128-bit, AAD context), dan analisis risiko bila nonce berulang.
-  - `scripts/test-crypto.ts`: 5 skenario uji otomatis dengan pelaporan warna terminal yang dapat diulang kapan saja.
+  - `lib/crypto.ts`: fungsi `enkripsiAEAD`, `dekripsiAEAD`, dan derivasi kunci `turunkanKunci` (HKDF-SHA256).
+  - `KEPUTUSAN.md` & `docs/Kriptografi/Tugas2/KEPUTUSAN.md`: dokumentasi lengkap pemetaan kriptografi, parameter (panjang kunci 256-bit, IV 96-bit, tag 128-bit, AAD context), dan analisis risiko bila nonce berulang.
+  - `scripts/test-crypto.ts`: 6 skenario uji otomatis dengan pelaporan warna terminal yang dapat diulang kapan saja via `npm test`.
   - `docs/Pemrograman-aplikasi-dan-web/Tugas2/pengujian-paw-v0.2.md` & `README.md`: dokumentasi skenario pengujian CRUD PAW dan bukti penolakan validasi server.
 - Verifikasi: Menjalankan eksekusi uji otomatis AEAD (`npx tsx scripts/test-crypto.ts`), verifikasi `npx tsc --noEmit` bersih tanpa galat, dan uji alur validasi server Zod.
