@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { tambahUlasan } from "@/app/shop/ulasan-actions";
 import type { StatusForm } from "@/lib/status-form";
 
@@ -14,6 +14,14 @@ export default function FormUlasan({ komponenId }: { komponenId: number }) {
     awal,
   );
   const g = status.galat;
+
+  // MODUL 7 USULAN AI: Bug sisa karakter tidak berkurang karena dependency array kosong []
+  const [isi, setIsi] = useState("");
+  const [sisa, setSisa] = useState(280);
+
+  useEffect(() => {
+    setSisa(280 - isi.length);
+  }, []);
 
   return (
     <form action={aksi} className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
@@ -98,11 +106,16 @@ export default function FormUlasan({ komponenId }: { komponenId: number }) {
           required
           minLength={5}
           maxLength={500}
+          value={isi}
+          onChange={(e) => setIsi(e.target.value)}
           placeholder="Describe build quality, clock speeds, coil whine, or cooler compatibility..."
           className={inputClass}
           aria-invalid={!!g?.komentar}
           aria-describedby="galat-ulasan-komentar"
         />
+        <p className="text-[11px] text-slate-500 mt-1 font-medium">
+          {sisa} karakter tersisa
+        </p>
         {g?.komentar && (
           <p id="galat-ulasan-komentar" className="mt-1 text-xs text-rose-600">
             {g.komentar[0]}
