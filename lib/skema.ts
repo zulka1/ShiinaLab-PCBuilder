@@ -8,16 +8,20 @@ export const kategoriKomponen = [
   "Storage",
   "PowerSupply",
   "Case",
+  "Cooler",
 ] as const;
 
-export const labelKategori: Record<(typeof kategoriKomponen)[number], string> = {
-  Processor: "Prosesor",
-  Motherboard: "Motherboard",
-  GraphicsCard: "Kartu Grafis",
-  Memory: "Memori (RAM)",
-  Storage: "Penyimpanan (Storage)",
-  PowerSupply: "Catu Daya (PSU)",
-  Case: "Casing",
+export type KategoriKomponen = (typeof kategoriKomponen)[number];
+
+export const labelKategori: Record<KategoriKomponen, string> = {
+  Processor: "Processors",
+  Motherboard: "Motherboards",
+  GraphicsCard: "Graphics Cards",
+  Memory: "Memory (RAM)",
+  Storage: "Storage (SSD)",
+  PowerSupply: "Power Supply (PSU)",
+  Case: "Cases",
+  Cooler: "Liquid Cooling",
 };
 
 export const skemaKomponen = z.object({
@@ -29,7 +33,6 @@ export const skemaKomponen = z.object({
   kategori: z
     .string()
     .transform((val) => {
-      // Normalisasi jika formulir mengirimkan format dengan spasi
       if (val === "Graphics card") return "GraphicsCard";
       if (val === "Power supply") return "PowerSupply";
       return val;
@@ -76,6 +79,26 @@ export const skemaUlasan = z.object({
 export type MasukanUlasan = z.infer<typeof skemaUlasan>;
 
 export const skemaMasuk = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(3, "Masukkan email atau username (minimal 3 karakter)"),
+  kataSandi: z.string().min(6, "Kata sandi minimal 6 karakter"),
+});
+
+export const skemaDaftar = z.object({
+  username: z
+    .string()
+    .trim()
+    .regex(
+      /^[a-zA-Z0-9_]{3,24}$/,
+      "Username harus 3-24 karakter (huruf, angka, atau garis bawah)",
+    ),
   email: z.email("Format email tidak valid"),
+  namaLengkap: z
+    .string()
+    .trim()
+    .min(2, "Nama lengkap minimal 2 karakter")
+    .max(80, "Nama lengkap maksimal 80 karakter"),
   kataSandi: z.string().min(8, "Kata sandi minimal 8 karakter"),
 });

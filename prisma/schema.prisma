@@ -15,6 +15,7 @@ enum Kategori {
   Storage
   PowerSupply
   Case
+  Cooler
 }
 
 model Komponen {
@@ -39,4 +40,35 @@ model Ulasan {
   komponen   Komponen  @relation(fields: [komponenId], references: [id], onDelete: Restrict)
 
   @@unique([komponenId, nama])
+}
+
+model Pengguna {
+  id           Int                @id @default(autoincrement())
+  username     String             @unique
+  email        String             @unique
+  namaLengkap  String?
+  passwordHash String
+  peran        String             @default("user")
+  dibuatPada   DateTime           @default(now())
+  sesi         SesiPengguna[]
+  rakitan      RakitanTersimpan[]
+}
+
+model SesiPengguna {
+  id          String   @id
+  penggunaId  Int
+  pengguna    Pengguna @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
+  kedaluwarsa DateTime
+  dibuatPada  DateTime @default(now())
+}
+
+model RakitanTersimpan {
+  id           Int      @id @default(autoincrement())
+  nama         String
+  komponenJson String
+  totalHarga   Int
+  estimasiWatt Int
+  dibuatPada   DateTime @default(now())
+  penggunaId   Int
+  pengguna     Pengguna @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
 }

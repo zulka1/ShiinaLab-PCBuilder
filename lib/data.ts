@@ -14,7 +14,14 @@ const kolomKomponen = {
 
 export async function ambilDaftarKomponen() {
   return prisma.komponen.findMany({
-    select: kolomKomponen,
+    select: {
+      ...kolomKomponen,
+      ulasan: {
+        select: {
+          nilai: true,
+        },
+      },
+    },
     orderBy: { dibuatPada: "desc" },
   });
 }

@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "nama": "ASUS ROG Strix GeForce RTX 4080 (White)",
+    "kategori": "GraphicsCard",
+    "harga": 21500000,
+    "deskripsi": "Flagship white edition graphics card with axial-tech fans, 16GB GDDR6X, 3.2GHz boost clock, and vapor chamber cooling.",
+    "tersedia": true,
+    "gambar": "/images/rtx-4080-white.jpg"
+  },
+  {
+    "id": 2,
+    "nama": "Intel Core i9-14900K Processor (Box)",
+    "kategori": "Processor",
+    "harga": 9450000,
+    "deskripsi": "24 cores (8 P-cores + 16 E-cores) up to 6.0 GHz thermal velocity boost for uncompromising 4K gaming and 3D workstations.",
+    "tersedia": true,
+    "gambar": "/images/intel-i9-14900k.jpg"
+  },
+  {
+    "id": 3,
+    "nama": "Corsair Dominator Titanium RGB 32GB (2x16GB)",
+    "kategori": "Memory",
+    "harga": 3450000,
+    "deskripsi": "Premium forged white aluminum DDR5-6000MHz CL30 memory kit with vibrant diffused RGB top bar and DHX cooling.",
+    "tersedia": true,
+    "gambar": "/images/corsair-dominator-ram.jpg"
+  },
+  {
+    "id": 4,
+    "nama": "ASUS ROG Strix Z790-A Gaming WIFI II Motherboard",
+    "kategori": "Motherboard",
+    "harga": 5650000,
+    "deskripsi": "ATX LGA1700 motherboard with silver-white VRM heatsinks, 16+1 power stages, PCIe 5.0, DDR5, and Wi-Fi 7.",
+    "tersedia": true,
+    "gambar": "/images/asus-z790-mobo.jpg"
+  },
+  {
+    "id": 5,
+    "nama": "Lian Li O11 Dynamic EVO Mid-Tower Case",
+    "kategori": "Case",
+    "harga": 2750000,
+    "deskripsi": "Dual-chamber panoramic tempered glass mid-tower case in pure ceramic white for showcase custom builds.",
+    "tersedia": true,
+    "gambar": "/images/lianli-o11-case.jpg"
+  },
+  {
+    "id": 6,
+    "nama": "NZXT Kraken Elite 360 RGB AIO Liquid Cooler",
+    "kategori": "Cooler",
+    "harga": 4450000,
+    "deskripsi": "White 360mm AIO liquid cooler featuring a wide-angle 2.36-inch LCD pump display and three F120 RGB Core fans.",
+    "tersedia": true,
+    "gambar": "/images/nzxt-kraken-cooler.jpg"
+  }
+]

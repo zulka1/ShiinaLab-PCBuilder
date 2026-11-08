@@ -1,33 +1,32 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { getCurrentSession } from "@/lib/auth";
+import { Prisma } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
+import { bacaSesi } from "@/lib/sesi";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export async function GET() {
-  const session = await getCurrentSession();
-  if (!session) {
+  const sesi = await bacaSesi();
+  if (!sesi) {
     return NextResponse.json({ error: "Silakan masuk terlebih dahulu." }, { status: 401 });
   }
 
-  const user = db.prepare(`
-    SELECT username, full_name AS fullName, email
-    FROM users
-    WHERE id = ?
-  `).get(session.userId);
-
-  if (!user) {
-    return NextResponse.json({ error: "Akun tidak ditemukan." }, { status: 404 });
-  }
-
-  return NextResponse.json({ user });
+  return NextResponse.json({
+    user: {
+      id: sesi.penggunaId,
+      username: sesi.username,
+      fullName: sesi.namaLengkap,
+      email: sesi.email,
+      role: sesi.peran,
+    },
+  });
 }
 
 export async function PATCH(request: Request) {
-  const session = await getCurrentSession();
-  if (!session) {
+  const sesi = await bacaSesi();
+  if (!sesi) {
     return NextResponse.json({ error: "Silakan masuk terlebih dahulu." }, { status: 401 });
   }
 
@@ -48,53 +47,34 @@ export async function PATCH(request: Request) {
 
   if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
     return NextResponse.json(
-      { error: "Username harus 3–24 karakter: huruf, angka, atau garis bawah." },
+      { error: "Username harus 3-24 karakter: huruf, angka, atau garis bawah." },
       { status: 400 },
     );
   }
   if (fullName.length > 80) {
     return NextResponse.json({ error: "Nama maksimal 80 karakter." }, { status: 400 });
   }
-  if (email.length > 254 || (email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Format email tidak valid." }, { status: 400 });
   }
 
-  const conflictingUser = db.prepare(`
-    SELECT id FROM users
-    WHERE id != ? AND (
-      username = ? OR (? != '' AND email = ? COLLATE NOCASE)
-    )
-  `).get(session.userId, username, email, email);
-
-  if (conflictingUser) {
-    return NextResponse.json(
-      { error: "Username atau email sudah digunakan akun lain." },
-      { status: 409 },
-    );
-  }
-
   try {
-    db.prepare(`
-      UPDATE users
-      SET username = ?, full_name = ?, email = ?
-      WHERE id = ?
-    `).run(username, fullName || null, email || null, session.userId);
-  } catch (error) {
-    const conflictAfterCheck = db.prepare(`
-      SELECT id FROM users
-      WHERE id != ? AND (
-        username = ? OR (? != '' AND email = ? COLLATE NOCASE)
-      )
-    `).get(session.userId, username, email, email);
-
-    if (conflictAfterCheck) {
+    await prisma.pengguna.update({
+      where: { id: sesi.penggunaId },
+      data: {
+        username,
+        namaLengkap: fullName || null,
+        email,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
       return NextResponse.json(
         { error: "Username atau email sudah digunakan akun lain." },
         { status: 409 },
       );
     }
-
-    throw error;
+    return NextResponse.json({ error: "Gagal memperbarui profil." }, { status: 500 });
   }
 
   return NextResponse.json({ message: "Profil berhasil diperbarui." });

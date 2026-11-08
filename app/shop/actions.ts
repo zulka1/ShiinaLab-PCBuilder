@@ -6,24 +6,34 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { skemaKomponen } from "@/lib/skema";
+import { bacaSesi } from "@/lib/sesi";
+import { inferProductAttributes } from "@/app/data/mock-products";
 import type { StatusForm } from "@/lib/status-form";
 
 export async function simpanKomponen(
   _sebelumnya: StatusForm,
   formData: FormData,
 ): Promise<StatusForm> {
+  if (!(await bacaSesi())) {
+    return { pesan: "Sesi berakhir. Silakan masuk kembali." };
+  }
+
   const mentah = Object.fromEntries(formData);
   const nilai = {
     nama: String(mentah.nama ?? ""),
     kategori: String(mentah.kategori ?? ""),
     harga: String(mentah.harga ?? ""),
     deskripsi: String(mentah.deskripsi ?? ""),
+    gambar: String(mentah.gambar ?? ""),
   };
 
-  // 1. Validasi Zod 4
+  const tersediaRaw = formData.get("tersedia");
+  const tersedia =
+    tersediaRaw === "on" || tersediaRaw === "true" || tersediaRaw === "1";
+
   const hasil = skemaKomponen.safeParse({
     ...mentah,
-    tersedia: formData.get("tersedia") === "on",
+    tersedia,
   });
 
   if (!hasil.success) {
@@ -34,35 +44,44 @@ export async function simpanKomponen(
     };
   }
 
-  // 2. Simpan ke PostgreSQL melalui Prisma
-  let baruId: number;
+  const gambarInput = hasil.data.gambar?.trim() || null;
+  const inferred = inferProductAttributes(
+    hasil.data.nama,
+    hasil.data.kategori,
+    gambarInput,
+  );
+
+  let itemBaru: { id: number };
   try {
-    const baru = await prisma.komponen.create({
+    itemBaru = await prisma.komponen.create({
       data: {
         nama: hasil.data.nama,
         kategori: hasil.data.kategori,
         harga: hasil.data.harga,
         deskripsi: hasil.data.deskripsi,
         tersedia: hasil.data.tersedia,
-        gambar: hasil.data.gambar ?? null,
+        gambar: gambarInput || inferred.image,
       },
+      select: { id: true },
     });
-    baruId = baru.id;
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
       return {
-        galat: { nama: ["Nama komponen sudah terdaftar"] },
-        pesan: "Gagal menyimpan: nama komponen sudah ada.",
+        galat: { nama: ["Nama komponen sudah terdaftar di katalog"] },
+        pesan: "Komponen dengan nama yang sama sudah ada.",
         nilai,
       };
     }
-    console.error("simpanKomponen gagal:", e);
-    return { pesan: "Komponen gagal disimpan ke basis data.", nilai };
+    console.error("simpanKomponen error:", e);
+    return {
+      pesan: "Gagal menyimpan ke basis data. Coba beberapa saat lagi.",
+      nilai,
+    };
   }
 
-  // 3. Revalidasi cache dan redirect ke halaman detail
   revalidatePath("/shop");
-  redirect(`/shop/${baruId}`);
+  revalidatePath("/admin");
+  redirect(`/shop/${itemBaru.id}`);
 }
 
 export async function ubahKomponen(
@@ -70,17 +89,26 @@ export async function ubahKomponen(
   _sebelumnya: StatusForm,
   formData: FormData,
 ): Promise<StatusForm> {
+  if (!(await bacaSesi())) {
+    return { pesan: "Sesi berakhir. Silakan masuk kembali." };
+  }
+
   const mentah = Object.fromEntries(formData);
   const nilai = {
     nama: String(mentah.nama ?? ""),
     kategori: String(mentah.kategori ?? ""),
     harga: String(mentah.harga ?? ""),
     deskripsi: String(mentah.deskripsi ?? ""),
+    gambar: String(mentah.gambar ?? ""),
   };
+
+  const tersediaRaw = formData.get("tersedia");
+  const tersedia =
+    tersediaRaw === "on" || tersediaRaw === "true" || tersediaRaw === "1";
 
   const hasil = skemaKomponen.safeParse({
     ...mentah,
-    tersedia: formData.get("tersedia") === "on",
+    tersedia,
   });
 
   if (!hasil.success) {
@@ -90,6 +118,13 @@ export async function ubahKomponen(
       nilai,
     };
   }
+
+  const gambarInput = hasil.data.gambar?.trim() || null;
+  const inferred = inferProductAttributes(
+    hasil.data.nama,
+    hasil.data.kategori,
+    gambarInput,
+  );
 
   try {
     await prisma.komponen.update({
@@ -100,7 +135,7 @@ export async function ubahKomponen(
         harga: hasil.data.harga,
         deskripsi: hasil.data.deskripsi,
         tersedia: hasil.data.tersedia,
-        gambar: hasil.data.gambar ?? null,
+        gambar: gambarInput || inferred.image,
       },
     });
   } catch (e) {
@@ -121,16 +156,18 @@ export async function ubahKomponen(
 
   revalidatePath("/shop");
   revalidatePath(`/shop/${id}`);
-  return { pesan: "Perubahan disimpan." };
+  revalidatePath("/admin");
+  redirect(`/shop/${id}`);
 }
 
 export async function hapusKomponen(id: number) {
-  // Transaksi atomik: hapus ulasan terkait terlebih dahulu, baru hapus komponen
+  // Transaksi atomik (Modul 6): hapus ulasan terkait terlebih dahulu, baru hapus komponen
   await prisma.$transaction([
     prisma.ulasan.deleteMany({ where: { komponenId: id } }),
     prisma.komponen.delete({ where: { id } }),
   ]);
 
   revalidatePath("/shop");
+  revalidatePath("/admin");
   redirect("/shop");
 }

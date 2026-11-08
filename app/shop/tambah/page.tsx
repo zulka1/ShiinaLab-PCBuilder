@@ -8,29 +8,36 @@ import { bacaSesi } from "@/lib/sesi";
 import { keluar } from "@/app/masuk/actions";
 
 export const metadata: Metadata = {
-  title: "Tambah Komponen | ShiinaLab",
+  title: "Tambah Komponen | ShiinaLab 2026",
   description: "Formulir penambahan komponen PC tervalidasi dengan Server Action dan Zod 4.",
 };
+
+export const instant = false;
 
 async function KontenTambahKomponen() {
   const sesi = await bacaSesi();
   if (!sesi) redirect("/masuk");
 
   return (
-    <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+    <div className="rounded-3xl border border-slate-200/90 bg-white p-7 sm:p-9 shadow-xs space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
         <div>
-          <p className="eyebrow">Parts Store / Server Action</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-            Tambah Komponen
+          <span className="text-[11px] font-extrabold text-blue-600 uppercase tracking-wider block mb-1">
+            PostgreSQL Inventory SKUs
+          </span>
+          <h1 className="text-2xl font-extrabold text-slate-950 tracking-tight">
+            Tambah Komponen Baru
           </h1>
-          <p className="mt-1 text-sm text-neutral-400">
-            Masuk sebagai <strong className="text-amber-300">{sesi.email}</strong>
+          <p className="mt-1 text-xs text-slate-500">
+            Masuk sebagai: <strong className="text-slate-900">{sesi.email || sesi.username}</strong> ({sesi.peran})
           </p>
         </div>
         <form action={keluar}>
-          <button type="submit" className="button button-quiet text-sm">
-            Keluar
+          <button
+            type="submit"
+            className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-bold text-xs transition"
+          >
+            Keluar Sesi
           </button>
         </form>
       </div>
@@ -41,21 +48,23 @@ async function KontenTambahKomponen() {
 
 export default function HalamanTambahKomponen() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col text-slate-900 bg-[#f8fafc]">
       <SiteHeader activePage="shop" />
-      <main id="konten" className="site-page">
-        <div className="page-container max-w-2xl mx-auto py-8">
-          <nav aria-label="Breadcrumb" className="mb-6">
-            <Link
-              href="/shop"
-              className="text-sm text-neutral-400 hover:text-amber-200 transition-colors inline-flex items-center gap-1.5"
-            >
-              <span aria-hidden="true">&larr;</span> Kembali ke Katalog
-            </Link>
-          </nav>
+
+      <main id="konten" className="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 py-8 space-y-6">
+        <nav aria-label="Breadcrumb">
+          <Link
+            href="/shop"
+            className="text-xs font-bold text-slate-500 hover:text-blue-600 transition inline-flex items-center gap-1.5"
+          >
+            <span aria-hidden="true">&larr;</span> Kembali ke Katalog Komponen
+          </Link>
+        </nav>
+
+        <div className="max-w-2xl mx-auto">
           <Suspense
             fallback={
-              <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-8 text-sm text-neutral-400">
+              <div className="rounded-3xl border border-slate-200 bg-white p-8 text-xs text-slate-500">
                 Memeriksa sesi pengelola...
               </div>
             }
@@ -64,8 +73,8 @@ export default function HalamanTambahKomponen() {
           </Suspense>
         </div>
       </main>
+
       <SiteFooter />
-    </>
+    </div>
   );
 }
-

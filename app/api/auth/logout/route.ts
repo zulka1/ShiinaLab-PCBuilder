@@ -1,23 +1,12 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { db } from "@/lib/db";
-import { hashSessionToken, sessionCookieName } from "@/lib/auth";
+import { hapusSesi } from "@/lib/sesi";
 
 export async function POST() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(sessionCookieName)?.value;
+  await hapusSesi();
+  return NextResponse.json({ message: "Berhasil keluar." });
+}
 
-  if (token) {
-    db.prepare("DELETE FROM sessions WHERE token_hash = ?").run(hashSessionToken(token));
-  }
-
-  const response = NextResponse.json({ message: "Berhasil keluar." });
-  response.cookies.set(sessionCookieName, "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
-  return response;
+export async function GET(request: Request) {
+  await hapusSesi();
+  return NextResponse.redirect(new URL("/", request.url));
 }
