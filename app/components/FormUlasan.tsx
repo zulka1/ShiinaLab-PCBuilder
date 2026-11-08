@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useEffect } from "react";
+import { useActionState, useState } from "react";
 import { tambahUlasan } from "@/app/shop/ulasan-actions";
 import type { StatusForm } from "@/lib/status-form";
 
@@ -15,13 +15,9 @@ export default function FormUlasan({ komponenId }: { komponenId: number }) {
   );
   const g = status.galat;
 
-  // MODUL 7 USULAN AI: Bug sisa karakter tidak berkurang karena dependency array kosong []
+  // MODUL 7 PERBAIKAN: Nilai turunan dihitung langsung saat render (tanpa useEffect & state ganda)
   const [isi, setIsi] = useState("");
-  const [sisa, setSisa] = useState(280);
-
-  useEffect(() => {
-    setSisa(280 - isi.length);
-  }, []);
+  const sisa = 280 - isi.length;
 
   return (
     <form action={aksi} className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
